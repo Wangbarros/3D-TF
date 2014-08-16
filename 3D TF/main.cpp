@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 {
     int i;
 	int j, j2;
-	int linha,coluna, plano;
+	int linha,coluna, plano, maxlinha, maxcoluna, maxplano;
 	struct malha *Celula;
 	//malha *Celula = (malha*) malloc (sizeof(malha));
 	int CAi, VFi, CAj, VFj, CAz, VFz, a;
@@ -80,9 +80,12 @@ int main(int argc, char* argv[])
     
 	tempo = 0;
 	Dtempo = 0.0001; //Passo de tempo
-	linha = 300;
-	coluna = 300;
-    plano = 300;
+	linha = 100;
+	coluna = 100;
+    plano = 100;
+    maxlinha = linha;
+    maxcoluna = coluna;
+    maxplano = plano;
 	G = 0;
 	Celula = (struct malha *) malloc ( ((plano*CAi*VFi*CAj*VFj)+(linha*CAi*VFi) + coluna)*sizeof(struct malha));
 	//Condicoes iniciais de todas as celulas
@@ -121,7 +124,7 @@ int main(int argc, char* argv[])
                 if ( ((((Celula+(linha*CAi*VFi) + coluna))->orient) !=2.0) && ((((Celula+(linha*CAi*VFi) + coluna))->Sresfr_crit)<(((Celula+(linha*CAi*VFi) + coluna))->Sresfr))){
                     (((Celula+(linha*CAi*VFi) + coluna))->ativado) = 1.0;}
                 //Caso todas as celulas ao redor da selecionada j· estejam nucleadas. A celula selecionada È desativada.
-                if ( (numeroCelula<89700)&&(numeroCelula>299)&&(((numeroCelula-(300*linha))%299)!=0)&&(numeroCelula % 300 !=0) ){
+                if ( (numeroCelula<maxcoluna*(maxlinha-1))&&(numeroCelula>maxcoluna)&&(((numeroCelula-(maxcoluna*linha))%(maxcoluna - 1))!=0)&&(numeroCelula % maxcoluna !=0) ){
                     if (  ((((Celula+(linha*CAi*VFi) + (coluna+1)))->orient) !=2.0)){
                         if (  ((((Celula+(linha*CAi*VFi) + (coluna-1)))->orient) !=2.0)){
                           	if (  ((((Celula+((linha+1)*CAi*VFi) + coluna))->orient) !=2.0)){
@@ -156,7 +159,7 @@ int main(int argc, char* argv[])
                     
                     Vertices (((Celula+(linha*CAi*VFi) + coluna)), V1, V2, V3, V4);
                     //Nucleacao da parede da direita
-                    if ( (((numeroCelula-(300*linha))%299)==0)&&(numeroCelula!=299)&&(numeroCelula!=90000)&&(numeroCelula % 300 !=0)){
+                    if ( (((numeroCelula-(maxcoluna*linha))%(maxcoluna-1))==0)&&(numeroCelula!=(maxcoluna-1))&&(numeroCelula!=maxcoluna*maxlinha)&&(numeroCelula % maxcoluna !=0)){
                         
                         Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna-1))),V1, V2, V3, V4, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna-1)))  );
@@ -169,7 +172,7 @@ int main(int argc, char* argv[])
                     }
                     
                     //Nucleacao da parede da esquerda
-                    if ( (numeroCelula % 300 ==0)&&(numeroCelula!=0)&&(numeroCelula!=89700) ){
+                    if ( (numeroCelula % maxcoluna ==0)&&(numeroCelula!=0)&&(numeroCelula!=(maxcoluna*(maxlinha-1))) ){
                         
                         Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna+1))),V1, V2, V3, V4, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna+1)))  );
@@ -182,7 +185,7 @@ int main(int argc, char* argv[])
                     }
                     
                     //Nucleacao da parede de baixo
-                    if ( (numeroCelula>89700) && (numeroCelula !=89999) &&(numeroCelula !=89700)){
+                    if ( (numeroCelula>(maxcoluna*(maxlinha-1))) && (numeroCelula !=(maxcoluna*maxlinha)-1) &&(numeroCelula !=(maxcoluna*(maxlinha-1)))){
                         
                         Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna+1))),V1, V2, V3, V4, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna+1)))  );
@@ -195,7 +198,7 @@ int main(int argc, char* argv[])
                     }
                     
                     //Nucleacao da parede de cima
-                    if ( (numeroCelula<299) && (numeroCelula !=0)&& (numeroCelula !=299)){
+                    if ( (numeroCelula<(maxcoluna)-1) && (numeroCelula !=0)&& (numeroCelula !=(maxcoluna*maxlinha)-1)){
                         
                         Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna+1))),V1, V2, V3, V4, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna+1)))  );
@@ -207,7 +210,7 @@ int main(int argc, char* argv[])
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+((linha+1)*CAi*VFi) + coluna))  );
                     }
                     //Nucleacao do centro
-                    if ( (numeroCelula<89700)&&(numeroCelula>299)&&(((numeroCelula-(300*linha))%299)!=0)&&(numeroCelula % 300 !=0) ){
+                    if ( (numeroCelula<(maxcoluna*(maxlinha-1)))&&(numeroCelula>(maxcoluna-1))&&(((numeroCelula-(maxcoluna*linha))%(maxcoluna-1))!=0)&&(numeroCelula % maxcoluna !=0) ){
                         
                         Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna+1))),V1, V2, V3, V4, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna+1)))  );
@@ -231,7 +234,7 @@ int main(int argc, char* argv[])
                         Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha+1)*CAi*VFi) + coluna)),V1, V2, V3, V4, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+((linha+1)*CAi*VFi) + coluna))  );
                     }
-                    if (numeroCelula==299){
+                    if (numeroCelula==maxcoluna){
                         
                         Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna-1))),V1, V2, V3, V4, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna-1)))  );
@@ -239,14 +242,14 @@ int main(int argc, char* argv[])
                         Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha+1)*CAi*VFi) + coluna)),V1, V2, V3, V4, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+((linha+1)*CAi*VFi) + coluna))  );
                     }
-                    if (numeroCelula==89999){
+                    if (numeroCelula==(maxcoluna*maxlinha)-1){
                         Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna-1))),V1, V2, V3, V4, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna-1)))  );
                         
                         Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha-1)*CAi*VFi) + coluna)),V1, V2, V3, V4, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+((linha-1)*CAi*VFi) + coluna))  );
                     }
-                    if (numeroCelula==89700){
+                    if (numeroCelula==(maxcoluna*(maxlinha-1))){
                         
                         Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna+1))),V1, V2, V3, V4, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna+1)))  );
@@ -294,7 +297,7 @@ int main(int argc, char* argv[])
             
             
             
-            if ( (((Celula+((i*100*100)+(linha*CAi*VFi) + coluna) ) -> orient) != 2.0)&&(((Celula+((linha*CAi*VFi) + coluna) ) -> orient) != 3.0) ){ //2.0 È uma celula n„o nucleada. Essa funcao acaba no fill.
+            if ( (((Celula+((i*maxplano*maxplano)+(linha*maxcoluna) + coluna) ) -> orient) != 2.0)&&(((Celula+((linha*CAi*VFi) + coluna) ) -> orient) != 3.0) ){ //2.0 È uma celula n„o nucleada. Essa funcao acaba no fill.
                 
                 xpos=(DxCA/2.0) + coluna*DxCA; //DxCA È a distancia entre celulas do automato celular em x
                 ypos= tamanhoy - (DyCA/2.0) - (linha*DyCA); //DyCA È a distancia entre celulas do automato celular em y
@@ -645,29 +648,28 @@ double Tamanho (double velocidade, double Dt) {
     Tamanho = (Tamanho);
     
     return Tamanho; }
+
 void Vertices (struct malha *Celula, double V1[], double V2[], double V3[], double V4[]){
-    double seno;
-    double cosseno;
+    double seno, seno2, seno3;
+    double cosseno, cosseno2, cosseno3;
     double a1;
     double a2;
     double V10, V11, V20, V21, V30, V31, V40, V41;
     
-   seno = sin(Celula->orient);
+    seno = sin(Celula->orient);
     cosseno = cos(Celula->orient);
-    if (seno<0) {
-        seno = 0 - seno;}
+    seno2 = sin(Celula->orient2);
+    cosseno2 = cos(Celula->orient2);
+    seno3 = sin(Celula->orient3);
+    cosseno3 = cos(Celula->orient3);
     
-    if (cosseno<0) {
-        cosseno = 0 - cosseno;}
-    a1 = (Celula->L)*seno;
-    a2 = (Celula->L)*cosseno;
-    
-    //   printf("\n%f\n",Celula->CYrelativo);
-    
-    a1 = Celula -> L * cosseno;
-    a2 = Celula -> L * seno;
+    seno = Abs(seno);
+    cosseno = Abs(cosseno);
+    seno2 = Abs(seno2);
+    cosseno2 = Abs(cosseno2);
+    seno3 = Abs(seno3);
+    cosseno3 = Abs(cosseno3);
 
-  
     V10 = 0 + ((Celula -> L));
     V11 = 0 + ((Celula -> L));
     
