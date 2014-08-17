@@ -800,10 +800,12 @@ void Calpha (struct malha *Celula, struct malha *Vizinho, double V1[], double V2
 	dR[1] = (Vizinho->CYrelativo)-(Celula->CYrelativo);
     dR[2] = (Vizinho->CZrelativo)-(Celula->CZrelativo);
     
-    alpha[0] = (dR[0]*L1[0]+dR[1]*L1[1])/(L1[0]*L1[0]+L1[1]*L1[1]);
-    alpha[1] = (dR[0]*L2[0]+dR[1]*L2[1])/(L2[0]*L2[0]+L2[1]*L2[1]);
-    alpha[2] = (dR[0]*L3[0]+dR[1]*L3[1])/(L3[0]*L3[0]+L3[1]*L3[1]);
-    alpha[3] = (dR[0]*L4[0]+dR[1]*L4[1])/(L4[0]*L4[0]+L4[1]*L4[1]);
+    alpha[0] = (dR[0]*L1[0]+dR[1]*L1[1]+dR[2]*L1[2])/(L1[0]*L1[0]+L1[1]*L1[1]+L1[2]*L1[2]);
+    alpha[1] = (dR[0]*L2[0]+dR[1]*L2[1]+dR[2]*L2[2])/(L2[0]*L2[0]+L2[1]*L2[1]+L2[2]*L2[2]);
+    alpha[2] = (dR[0]*L3[0]+dR[1]*L3[1]+dR[2]*L3[2])/(L3[0]*L3[0]+L3[1]*L3[1]+L3[2]*L3[2]);
+    alpha[3] = (dR[0]*L4[0]+dR[1]*L4[1]+dR[2]*L4[2])/(L4[0]*L4[0]+L4[1]*L4[1]+L4[2]*L4[2]);
+    alpha[4] = (dR[0]*L5[0]+dR[1]*L5[1]+dR[2]*L5[2])/(L5[0]*L5[0]+L5[1]*L5[1]+L5[2]*L5[2]);
+    alpha[5] = (dR[0]*L6[0]+dR[1]*L6[1]+dR[2]*L6[2])/(L6[0]*L6[0]+L6[1]*L6[1]+L6[2]*L6[2]);
     
     for (i=0;i<6;i++){
         if (alpha[i]<0){
