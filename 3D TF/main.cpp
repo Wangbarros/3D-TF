@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 	double DxCA, DyCA, DzCA, Dtempo, tempo;
 	double Velocidade, G;
 	double Ox, Oy, Lc;
-	double V1[3], V2[3], V3[3], V4[3], V5[3], V6[3], alpha[4], T;
+	double V1[3], V2[3], V3[3], V4[3], V5[3], V6[3], alpha[6], T;
 	double dist[4];
 	double nmax0, nmax1, linear, area;
 	double b, formados_parede, formados_centro, total_parede, e_anterior_parede, e_anterior_centro, total_centro, e;
@@ -729,7 +729,7 @@ void Vertices (struct malha *Celula, double V1[], double V2[], double V3[], doub
 }
 double distancia (struct malha *Celula, double A[]){
     double dist;
-    double Dx, Dy;
+    double Dx, Dy, Dz;
     
     Dx = (Celula->CXrelativo) - A[0];
     
@@ -739,7 +739,11 @@ double distancia (struct malha *Celula, double A[]){
     
     Dy = Dy*Dy;
     
-    dist = Dx + Dy;
+    Dz = (Celula->CZrelativo) - A[2];
+    
+    Dz = Dz*Dz;
+    
+    dist = Dx + Dy + Dz;
     dist = sqrt(dist);
     
     return dist;}
@@ -796,13 +800,12 @@ void Calpha (struct malha *Celula, struct malha *Vizinho, double V1[], double V2
 	dR[1] = (Vizinho->CYrelativo)-(Celula->CYrelativo);
     dR[2] = (Vizinho->CZrelativo)-(Celula->CZrelativo);
     
-    
     alpha[0] = (dR[0]*L1[0]+dR[1]*L1[1])/(L1[0]*L1[0]+L1[1]*L1[1]);
     alpha[1] = (dR[0]*L2[0]+dR[1]*L2[1])/(L2[0]*L2[0]+L2[1]*L2[1]);
     alpha[2] = (dR[0]*L3[0]+dR[1]*L3[1])/(L3[0]*L3[0]+L3[1]*L3[1]);
     alpha[3] = (dR[0]*L4[0]+dR[1]*L4[1])/(L4[0]*L4[0]+L4[1]*L4[1]);
     
-    for (i=0;i<4;i++){
+    for (i=0;i<6;i++){
         if (alpha[i]<0){
             alpha[i] =2;}
         
