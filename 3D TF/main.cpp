@@ -824,23 +824,93 @@ void nucleacao (double alpha[], struct malha *Celula, double(*Abs)(double), doub
     dist[4] = distancia(Vizinho,V5);
     dist[5] = distancia(Vizinho,V6);
     
-	if (dist[0]<dist[2] && dist[0]<dist[3] && dist[1]<dist[2] && dist[1]<dist[3]){
-		Salpha = alpha[0] + alpha[1];}
+    //Combinacao de distancias. 4 em grupos de 2 tem total 6. 6 em grupos de 3 tem total 20.
+    //{0,1} {0,2} {0,3} {1,2} {1,3} {2,3} para 2D
     
-	if (dist[0]<dist[1] && dist[0]<dist[3] && dist[2]<dist[1] && dist[2]<dist[3]){
-		Salpha = alpha[0] + alpha[2];}
+    //{0,1,2}, {0,1,3}, {0,1,4}, {0,1,5}, {0,2,3}, {0,2,4}, {0,2,5}, {0,3,4}, {0,3,5}, {0,4,5}, {1,2,3}, {1,2,4}, {1,2,5}, {1,3,4}, {1,3,5}, {1,4,5}, {2,3,4}, {2,3,5}, {2,4,5}, {3,4,5} sets a serem feitos. Estamos tentando achar os 3 vertices mais proximos do Vizinho.
     
-	if (dist[0]<dist[1] && dist[0]<dist[2] && dist[3]<dist[1] && dist[3]<dist[2]){
-		Salpha = alpha[0] + alpha[3];}
+	if (dist[0]<dist[3] && dist[0]<dist[4] && dist[0]<dist[5] && dist[1]<dist[3] && dist[1]<dist[4] && dist[1]<dist[5] && dist[2]<dist[3] && dist[2]<dist[4] && dist[2]<dist[5]){
+        
+		Salpha = alpha[0] + alpha[1] + alpha[2];} //Combinacao de 0,1,2
     
-	if (dist[1]<dist[0] && dist[1]<dist[3] && dist[2]<dist[0] && dist[2]<dist[3]){
-		Salpha = alpha[1] + alpha[2];}
+	if (dist[0]<dist[2] && dist[0]<dist[4] && dist[0]<dist[5] && dist[1]<dist[2] && dist[1]<dist[4] && dist[1]<dist[5] && dist[3]<dist[2] && dist[3]<dist[4] && dist[3]<dist[5]){
+        
+		Salpha = alpha[0] + alpha[1] + alpha[3];} //Combinacao de 0,1,3
     
-	if (dist[1]<dist[0] && dist[1]<dist[2] && dist[3]<dist[0] && dist[3]<dist[2]){
-		Salpha = alpha[1] + alpha[3];}
+    if (dist[0]<dist[2] && dist[0]<dist[3] && dist[0]<dist[5] && dist[1]<dist[2] && dist[1]<dist[3] && dist[1]<dist[5] && dist[4]<dist[2] && dist[4]<dist[3] && dist[4]<dist[5]){
+        
+		Salpha = alpha[0] + alpha[1] + alpha[4];} //Combinacao de 0,1,4
     
-	if (dist[2]<dist[0] && dist[2]<dist[1] && dist[3]<dist[0] && dist[3]<dist[1]){
-		Salpha = alpha[2] + alpha[3];}
+    if (dist[0]<dist[2] && dist[0]<dist[3] && dist[0]<dist[4] && dist[1]<dist[2] && dist[1]<dist[3] && dist[1]<dist[4] && dist[5]<dist[2] && dist[5]<dist[3] && dist[5]<dist[4]){
+        
+		Salpha = alpha[0] + alpha[1] + alpha[5];} //Combinacao de 0,1,5
+    
+    if (dist[0]<dist[1] && dist[0]<dist[4] && dist[0]<dist[5] && dist[2]<dist[1] && dist[2]<dist[4] && dist[2]<dist[5] && dist[3]<dist[1] && dist[3]<dist[4] && dist[3]<dist[5]){
+        
+		Salpha = alpha[0] + alpha[2] + alpha[3];} //Combinacao de 0,2,3
+    
+    if (dist[0]<dist[1] && dist[0]<dist[3] && dist[0]<dist[5] && dist[2]<dist[1] && dist[2]<dist[3] && dist[2]<dist[5] && dist[4]<dist[1] && dist[4]<dist[3] && dist[4]<dist[5]){
+        
+		Salpha = alpha[0] + alpha[2] + alpha[4];} //Combinacao de 0,2,4
+    
+    if (dist[0]<dist[1] && dist[0]<dist[3] && dist[0]<dist[4] && dist[2]<dist[1] && dist[2]<dist[3] && dist[2]<dist[4] && dist[5]<dist[1] && dist[5]<dist[3] && dist[5]<dist[4]){
+        
+		Salpha = alpha[0] + alpha[2] + alpha[5];} //Combinacao de 0,2,5
+    
+    if (dist[0]<dist[1] && dist[0]<dist[2] && dist[0]<dist[5] && dist[3]<dist[1] && dist[3]<dist[2] && dist[3]<dist[5] && dist[4]<dist[1] && dist[4]<dist[2] && dist[4]<dist[5]){
+        
+		Salpha = alpha[0] + alpha[3] + alpha[4];} //Combinacao de 0,3,4
+    
+    if (dist[0]<dist[1] && dist[0]<dist[2] && dist[0]<dist[4] && dist[3]<dist[1] && dist[3]<dist[2] && dist[3]<dist[4] && dist[5]<dist[1] && dist[5]<dist[2] && dist[5]<dist[4]){
+        
+		Salpha = alpha[0] + alpha[3] + alpha[5];} //Combinacao de 0,3,5
+
+    if (dist[0]<dist[1] && dist[0]<dist[2] && dist[0]<dist[3] && dist[4]<dist[1] && dist[4]<dist[2] && dist[4]<dist[3] && dist[5]<dist[1] && dist[5]<dist[2] && dist[5]<dist[3]){
+        
+		Salpha = alpha[0] + alpha[4] + alpha[5];} //Combinacao de 0,4,5
+    
+    if (dist[1]<dist[0] && dist[1]<dist[4] && dist[1]<dist[5] && dist[2]<dist[0] && dist[2]<dist[4] && dist[2]<dist[5] && dist[3]<dist[0] && dist[3]<dist[4] && dist[3]<dist[5]){
+        
+		Salpha = alpha[1] + alpha[2] + alpha[3];} //Combinacao de 1,2,3
+    
+    if (dist[1]<dist[0] && dist[1]<dist[3] && dist[1]<dist[5] && dist[2]<dist[0] && dist[2]<dist[3] && dist[2]<dist[5] && dist[4]<dist[0] && dist[4]<dist[3] && dist[4]<dist[5]){
+        
+		Salpha = alpha[1] + alpha[2] + alpha[4];} //Combinacao de 1,2,4
+    
+    if (dist[1]<dist[0] && dist[1]<dist[3] && dist[1]<dist[4] && dist[2]<dist[0] && dist[2]<dist[3] && dist[2]<dist[4] && dist[5]<dist[0] && dist[5]<dist[3] && dist[5]<dist[4]){
+        
+		Salpha = alpha[1] + alpha[2] + alpha[5];} //Combinacao de 1,2,5
+    
+    if (dist[1]<dist[0] && dist[1]<dist[2] && dist[1]<dist[5] && dist[3]<dist[0] && dist[3]<dist[2] && dist[3]<dist[5] && dist[4]<dist[0] && dist[4]<dist[2] && dist[4]<dist[5]){
+        
+		Salpha = alpha[1] + alpha[3] + alpha[4];} //Combinacao de 1,3,4
+    
+    if (dist[1]<dist[0] && dist[1]<dist[2] && dist[1]<dist[4] && dist[3]<dist[0] && dist[3]<dist[2] && dist[3]<dist[4] && dist[5]<dist[0] && dist[5]<dist[2] && dist[5]<dist[4]){
+        
+		Salpha = alpha[1] + alpha[3] + alpha[5];} //Combinacao de 1,3,5
+    
+    if (dist[1]<dist[0] && dist[1]<dist[2] && dist[1]<dist[3] && dist[4]<dist[0] && dist[4]<dist[2] && dist[4]<dist[3] && dist[5]<dist[0] && dist[5]<dist[2] && dist[5]<dist[3]){
+        
+		Salpha = alpha[1] + alpha[4] + alpha[5];} //Combinacao de 1,4,5
+    
+    if (dist[2]<dist[0] && dist[2]<dist[1] && dist[2]<dist[5] && dist[3]<dist[0] && dist[3]<dist[1] && dist[3]<dist[5] && dist[4]<dist[0] && dist[4]<dist[1] && dist[4]<dist[5]){
+        
+		Salpha = alpha[2] + alpha[3] + alpha[4];} //Combinacao de 2,3,4
+    
+    if (dist[2]<dist[0] && dist[2]<dist[1] && dist[2]<dist[4] && dist[3]<dist[0] && dist[3]<dist[1] && dist[3]<dist[4] && dist[5]<dist[0] && dist[5]<dist[1] && dist[5]<dist[4]){
+        
+		Salpha = alpha[2] + alpha[3] + alpha[5];} //Combinacao de 2,3,5
+    
+    if (dist[2]<dist[0] && dist[2]<dist[1] && dist[2]<dist[3] && dist[4]<dist[0] && dist[4]<dist[1] && dist[4]<dist[3] && dist[5]<dist[0] && dist[5]<dist[1] && dist[5]<dist[3]){
+        
+		Salpha = alpha[2] + alpha[4] + alpha[5];} //Combinacao de 2,4,5
+    
+    if (dist[3]<dist[0] && dist[3]<dist[1] && dist[3]<dist[2] && dist[4]<dist[0] && dist[4]<dist[1] && dist[4]<dist[2] && dist[5]<dist[0] && dist[5]<dist[1] && dist[5]<dist[2]){
+        
+		Salpha = alpha[3] + alpha[4] + alpha[5];} //Combinacao de 3,4,5
+    
+	//if (dist[2]<dist[0] && dist[2]<dist[1] && dist[3]<dist[0] && dist[3]<dist[1]){
+	//	Salpha = alpha[2] + alpha[3];}
     
 	seno = sin(Vizinho->orient);
     cosseno = cos(Vizinho->orient);
