@@ -23,10 +23,10 @@ struct  malha {
 double Abs (double N);
 double Vcresc (struct malha *Celula);
 double Tamanho (double velocidade, double Dt);
-void Vertices (struct malha *Celula, double V1[], double V2[], double V3[], double V4[]);
+void Vertices (struct malha *Celula, double V1[], double V2[], double V3[], double V4[], double V5[], double V6[]);
 double distancia (struct malha *Celula, double V[]);
 double Truncado (double Lado);
-void Calpha (struct malha *Celula, struct malha *Vizinho, double V1[], double V2[], double V3[], double V4[], double alpha[]);
+void Calpha (struct malha *Celula, struct malha *Vizinho, double V1[], double V2[], double V3[], double V4[], double V5[], double V6[], double alpha[]);
 void nucleacao (double alpha[], struct malha *Celula, double(*Abs)(double), double(*Truncado)(double), double(*distancia)(struct malha *Celula, double A[]), double V1[], double V2[], double V3[], double V4[], struct malha *Vizinho);
 double formacao(double deltaT, double Tsigma, double Tnuc);
 double erf(double x);
@@ -39,18 +39,17 @@ double RandOrient();
 int main(int argc, char* argv[])
 {
     int i;
-	int j, j2;
+	int j;
 	int linha,coluna, plano, maxlinha, maxcoluna, maxplano;
 	struct malha *Celula;
 	//malha *Celula = (malha*) malloc (sizeof(malha));
-	int CAi, VFi, CAj, VFj, CAz, VFz, a;
+	int CAi, VFi, CAj, VFj, CAz, VFz;
 	double tamanhox, tamanhoy, tamanhoz;
-	double orientacao, seno, cosseno, ativado;
+	double orientacao, ativado;
 	double DxCA, DyCA, DzCA, Dtempo, tempo;
-	double Velocidade, G, GradY, GradX;
-	double Decentrado;
-	double DescX, DescY, Ox, Oy, Lc;
-	double V1[3], V2[3], V3[3], V4[3], alpha[4], T;
+	double Velocidade, G;
+	double Ox, Oy, Lc;
+	double V1[3], V2[3], V3[3], V4[3], V5[3], V6[3], alpha[4], T;
 	double dist[4];
 	double nmax0, nmax1, linear, area;
 	double b, formados_parede, formados_centro, total_parede, e_anterior_parede, e_anterior_centro, total_centro, e;
@@ -95,6 +94,8 @@ int main(int argc, char* argv[])
                 ((Celula+(linha*CAi*VFi) + coluna))->orient = 2.0; //Celulas com orientacao 2.0 siguinifica que nao estao nucleadas
              //   ((Celula+(plano*CAi*VFi*CAj*VFj)+(linha*CAi*VFi) + coluna))->Sresfr = 0.5+(G*DyCA*((300-linha)/2));
                 ((Celula+(linha*CAi*VFi) + coluna))->Sresfr = 0.5+(G*DyCA*((300-linha)/2));
+                ((Celula+(linha*CAi*VFi) + coluna))->orient2 = 0;
+                ((Celula+(linha*CAi*VFi) + coluna))->orient3 = 0;
                 ((Celula+(linha*CAi*VFi) + coluna))->L = 0;
                 ((Celula+(linha*CAi*VFi) + coluna))->fst = 0;
                 ((Celula+(linha*CAi*VFi) + coluna))->CXrelativo = coluna*DxCA;
@@ -157,104 +158,105 @@ int main(int argc, char* argv[])
                     orientacao = (((Celula+(linha*CAi*VFi) + coluna))->orient);
                     
                     
-                    Vertices (((Celula+(linha*CAi*VFi) + coluna)), V1, V2, V3, V4);
+                    Vertices (((Celula+(linha*CAi*VFi) + coluna)), V1, V2, V3, V4, V5, V6);
+                    
                     //Nucleacao da parede da direita
                     if ( (((numeroCelula-(maxcoluna*linha))%(maxcoluna-1))==0)&&(numeroCelula!=(maxcoluna-1))&&(numeroCelula!=maxcoluna*maxlinha)&&(numeroCelula % maxcoluna !=0)){
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna-1))),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna-1))),V1, V2, V3, V4, V5, V6, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna-1)))  );
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha+1)*CAi*VFi) + coluna)),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha+1)*CAi*VFi) + coluna)),V1, V2, V3, V4, V5, V6, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+((linha+1)*CAi*VFi) + coluna))  );
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha-1)*CAi*VFi) + coluna)),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha-1)*CAi*VFi) + coluna)),V1, V2, V3, V4, V5, V6, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+((linha-1)*CAi*VFi) + coluna))  );
                     }
                     
                     //Nucleacao da parede da esquerda
                     if ( (numeroCelula % maxcoluna ==0)&&(numeroCelula!=0)&&(numeroCelula!=(maxcoluna*(maxlinha-1))) ){
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna+1))),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna+1))),V1, V2, V3, V4, V5, V6, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna+1)))  );
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha+1)*CAi*VFi) + coluna)),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha+1)*CAi*VFi) + coluna)),V1, V2, V3, V4, V5, V6,alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+((linha+1)*CAi*VFi) + coluna))  );
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha-1)*CAi*VFi) + coluna)),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha-1)*CAi*VFi) + coluna)),V1, V2, V3, V4, V5, V6,alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+((linha-1)*CAi*VFi) + coluna))  );
                     }
                     
                     //Nucleacao da parede de baixo
                     if ( (numeroCelula>(maxcoluna*(maxlinha-1))) && (numeroCelula !=(maxcoluna*maxlinha)-1) &&(numeroCelula !=(maxcoluna*(maxlinha-1)))){
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna+1))),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna+1))),V1, V2, V3, V4, V5, V6,alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna+1)))  );
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna-1))),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna-1))),V1, V2, V3, V4, V5, V6, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna-1)))  );
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha-1)*CAi*VFi) + coluna)),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha-1)*CAi*VFi) + coluna)),V1, V2, V3, V4, V5, V6, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+((linha-1)*CAi*VFi) + coluna))  );
                     }
                     
                     //Nucleacao da parede de cima
                     if ( (numeroCelula<(maxcoluna)-1) && (numeroCelula !=0)&& (numeroCelula !=(maxcoluna*maxlinha)-1)){
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna+1))),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna+1))),V1, V2, V3, V4, V5, V6,alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna+1)))  );
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna-1))),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna-1))),V1, V2, V3, V4, V5, V6,alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna-1)))  );
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha+1)*CAi*VFi) + coluna)),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha+1)*CAi*VFi) + coluna)),V1, V2, V3, V4, V5, V6,alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+((linha+1)*CAi*VFi) + coluna))  );
                     }
                     //Nucleacao do centro
                     if ( (numeroCelula<(maxcoluna*(maxlinha-1)))&&(numeroCelula>(maxcoluna-1))&&(((numeroCelula-(maxcoluna*linha))%(maxcoluna-1))!=0)&&(numeroCelula % maxcoluna !=0) ){
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna+1))),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna+1))),V1, V2, V3, V4, V5, V6,alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna+1)))  );
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna-1))),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna-1))),V1, V2, V3, V4, V5, V6,alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna-1)))  );
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha+1)*CAi*VFi) + coluna)),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha+1)*CAi*VFi) + coluna)),V1, V2, V3, V4, V5, V6,alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+((linha+1)*CAi*VFi) + coluna))  );
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha-1)*CAi*VFi) + coluna)),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha-1)*CAi*VFi) + coluna)),V1, V2, V3, V4, V5, V6, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+((linha-1)*CAi*VFi) + coluna))  );
                         
                     }
                     //Nucleacao das celulas 0,299,89999,89700
                     if (numeroCelula==0) {
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna+1))),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna+1))),V1, V2, V3, V4, V5, V6,alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna+1)))  );
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha+1)*CAi*VFi) + coluna)),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha+1)*CAi*VFi) + coluna)),V1, V2, V3, V4, V5, V6,alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+((linha+1)*CAi*VFi) + coluna))  );
                     }
                     if (numeroCelula==maxcoluna){
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna-1))),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna-1))),V1, V2, V3, V4, V5, V6, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna-1)))  );
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha+1)*CAi*VFi) + coluna)),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha+1)*CAi*VFi) + coluna)),V1, V2, V3, V4, V5, V6, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+((linha+1)*CAi*VFi) + coluna))  );
                     }
                     if (numeroCelula==(maxcoluna*maxlinha)-1){
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna-1))),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna-1))),V1, V2, V3, V4, V5, V6, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna-1)))  );
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha-1)*CAi*VFi) + coluna)),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha-1)*CAi*VFi) + coluna)),V1, V2, V3, V4, V5, V6, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+((linha-1)*CAi*VFi) + coluna))  );
                     }
                     if (numeroCelula==(maxcoluna*(maxlinha-1))){
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna+1))),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+(linha*CAi*VFi) + (coluna+1))),V1, V2, V3, V4, V5, V6, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+(linha*CAi*VFi) + (coluna+1)))  );
                         
-                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha-1)*CAi*VFi) + coluna)),V1, V2, V3, V4, alpha);
+                        Calpha( ((Celula+(linha*CAi*VFi) + coluna)), ((Celula+((linha-1)*CAi*VFi) + coluna)),V1, V2, V3, V4, V5, V6, alpha);
                         nucleacao(alpha,((Celula+(linha*CAi*VFi) + coluna)), Abs, Truncado, distancia, V1, V2, V3, V4, ((Celula+((linha-1)*CAi*VFi) + coluna))  );
                     }
                 }}}
@@ -297,7 +299,7 @@ int main(int argc, char* argv[])
             
             
             
-            if ( (((Celula+((i*maxplano*maxplano)+(linha*maxcoluna) + coluna) ) -> orient) != 2.0)&&(((Celula+((linha*CAi*VFi) + coluna) ) -> orient) != 3.0) ){ //2.0 È uma celula n„o nucleada. Essa funcao acaba no fill.
+            if ( (((Celula+((i*maxplano*maxplano)+(linha*maxcoluna) + coluna) ) -> orient) != 2.0)&&(((Celula+((linha*CAi*VFi) + coluna) ) -> orient) != 3.0) && (Celula+((i*maxplano*maxplano)+(linha*maxcoluna) + coluna) ) -> ativado == 1.0  ){ //2.0 È uma celula n„o nucleada. Essa funcao acaba no fill.
                 
                 xpos=(DxCA/2.0) + coluna*DxCA; //DxCA È a distancia entre celulas do automato celular em x
                 ypos= tamanhoy - (DyCA/2.0) - (linha*DyCA); //DyCA È a distancia entre celulas do automato celular em y
@@ -649,18 +651,18 @@ double Tamanho (double velocidade, double Dt) {
     
     return Tamanho; }
 
-void Vertices (struct malha *Celula, double V1[], double V2[], double V3[], double V4[]){
+void Vertices (struct malha *Celula, double V1[], double V2[], double V3[], double V4[], double V5[], double V6[]){
     double seno, seno2, seno3;
     double cosseno, cosseno2, cosseno3;
-    double a1;
-    double a2;
-    double V10, V11, V20, V21, V30, V31, V40, V41;
+    double V10, V11, V12, V20, V21, V22, V30, V31, V32, V40, V41, V42, V50, V51, V52, V60, V61, V62;
     
-    seno = sin(Celula->orient);
+    //V1 ao V4 sao os verticies no "quadrado" V5 e V6 sao os verticies de cima e de baixo
+    
+    seno = sin(Celula->orient); //psi
     cosseno = cos(Celula->orient);
-    seno2 = sin(Celula->orient2);
+    seno2 = sin(Celula->orient2); //phi
     cosseno2 = cos(Celula->orient2);
-    seno3 = sin(Celula->orient3);
+    seno3 = sin(Celula->orient3); //theta
     cosseno3 = cos(Celula->orient3);
     
     seno = Abs(seno);
@@ -672,27 +674,56 @@ void Vertices (struct malha *Celula, double V1[], double V2[], double V3[], doub
 
     V10 = 0 + ((Celula -> L));
     V11 = 0 + ((Celula -> L));
+    V12 = 0;
     
     V20 = 0 - ((Celula -> L));
     V21 = 0 + ((Celula -> L));
+    V22 = 0;
     
     V30 = 0 - ((Celula -> L));
     V31 = 0 - ((Celula -> L));
+    V32 = 0;
     
     V40 = 0 + ((Celula -> L));
     V41 = 0 - ((Celula -> L));
+    V42 = 0;
+    
+    V50 = 0;
+    V51 = 0;
+    V52 = 0 + (Celula -> L);
+    
+    
+    V60 = 0;
+    V61 = 0;
+    V62 = 0 - (Celula -> L);
  
-    V1[0] = (V10*cosseno) - (V11*seno) + (Celula -> CXrelativo);
-    V1[1] = (V10*seno) + (V11*cosseno) + (Celula -> CYrelativo);
+    V1[0] = (V10*cosseno*cosseno3) + (V11*(cosseno2*seno+seno2*seno3*cosseno)) + (Celula -> CXrelativo);
+    V1[1] = -(V10*seno*cosseno3) + (V11*(cosseno*cosseno2-seno2*seno3*seno)) + (Celula -> CYrelativo);
+    V1[2] = (V10*seno3) + (V11*(-seno2*cosseno3)) + (V12*(cosseno2*cosseno3)) + (Celula -> CZrelativo);
     
-    V2[0] = (V20*cosseno) - (V21*seno) + (Celula -> CXrelativo);
-    V2[1] = (V20*seno) + (V21*cosseno) + (Celula -> CYrelativo);
+    V2[0] = (V20*cosseno*cosseno3) + (V21*(cosseno2*seno+seno2*seno3*cosseno)) + (Celula -> CXrelativo);
+    V2[1] = -(V20*seno*cosseno3) + (V21*(cosseno*cosseno2-seno2*seno3*seno)) + (Celula -> CYrelativo);
+    V2[2] = (V20*seno3) + (V21*(-seno2*cosseno3)) + (V22*(cosseno2*cosseno3)) + (Celula -> CZrelativo);
     
-    V3[0] = (V30*cosseno) - (V31*seno) + (Celula -> CXrelativo);
-    V3[1] = (V30*seno) + (V31*cosseno) + (Celula -> CYrelativo);
+    V3[0] = (V30*cosseno*cosseno3) + (V31*(cosseno2*seno+seno2*seno3*cosseno)) + (Celula -> CXrelativo);
+    V3[1] = -(V30*seno*cosseno3) + (V31*(cosseno*cosseno2-seno2*seno3*seno)) + (Celula -> CYrelativo);
+    V3[2] = (V30*seno3) + (V31*(-seno2*cosseno3)) + (V32*(cosseno2*cosseno3)) + (Celula -> CZrelativo);
     
-    V4[0] = (V40*cosseno) - (V41*seno) + (Celula -> CXrelativo);
-    V4[1] = (V40*seno) + (V41*cosseno) + (Celula -> CYrelativo);
+    V4[0] = (V40*cosseno*cosseno3) + (V41*(cosseno2*seno+seno2*seno3*cosseno)) + (Celula -> CXrelativo);
+    V4[1] = -(V40*seno*cosseno3) + (V41*(cosseno*cosseno2-seno2*seno3*seno)) + (Celula -> CYrelativo);
+    V4[2] = (V40*seno3) + (V41*(-seno2*cosseno3)) + (V42*(cosseno2*cosseno3)) + (Celula -> CZrelativo);
+    
+    
+    V5[0] = (V50*cosseno*cosseno3) + (V51*(cosseno2*seno+seno2*seno3*cosseno)) + (Celula -> CXrelativo);
+    V5[1] = -(V50*seno*cosseno3) + (V51*(cosseno*cosseno2-seno2*seno3*seno)) + (Celula -> CYrelativo);
+    V5[2] = (V50*seno3) + (V51*(-seno2*cosseno3)) + (V52*(cosseno2*cosseno3)) + (Celula -> CZrelativo);
+    
+    V6[0] = (V60*cosseno*cosseno3) + (V61*(cosseno2*seno+seno2*seno3*cosseno)) + (Celula -> CXrelativo);
+    V6[1] = -(V60*seno*cosseno3) + (V61*(cosseno*cosseno2-seno2*seno3*seno)) + (Celula -> CYrelativo);
+    V6[2] = (V60*seno3) + (V61*(-seno2*cosseno3)) + (V62*(cosseno2*cosseno3)) + (Celula -> CZrelativo);
+    
+  //  V2[0] = (V20*cosseno) + (V21*seno) + (Celula -> CXrelativo);
+  //  V2[1] = -(V20*seno) + (V21*cosseno) + (Celula -> CYrelativo);
     
 
 }
@@ -733,20 +764,39 @@ double Truncado (double Lado) {
     
     return NovoLado;
 }
-void Calpha (struct malha *Celula, struct malha *Vizinho, double V1[], double V2[], double V3[], double V4[], double alpha[]){
-	double L1[2], L2[2], L3[2], L4[2], dR[2];
+void Calpha (struct malha *Celula, struct malha *Vizinho, double V1[], double V2[], double V3[], double V4[], double V5[], double V6[], double alpha[]){
+	double L1[3], L2[3], L3[3], L4[3], L5[3], L6[3], dR[3];
 	int i;
     
 	L1[0] = V1[0]-(Celula->CXrelativo);
 	L1[1] = V1[1]-(Celula->CYrelativo);
+    L1[2] = V1[2]-(Celula->CZrelativo);
+    
 	L2[0] = V2[0]-(Celula->CXrelativo);
 	L2[1] = V2[1]-(Celula->CYrelativo);
+    L2[2] = V2[2]-(Celula->CZrelativo);
+    
 	L3[0] = V3[0]-(Celula->CXrelativo);
 	L3[1] = V3[1]-(Celula->CYrelativo);
+    L3[2] = V3[2]-(Celula->CZrelativo);
+    
 	L4[0] = V4[0]-(Celula->CXrelativo);
 	L4[1] = V4[1]-(Celula->CYrelativo);
+    L4[2] = V4[2]-(Celula->CZrelativo);
+    
+    L5[0] = V5[0]-(Celula->CXrelativo);
+	L5[1] = V5[1]-(Celula->CYrelativo);
+    L5[2] = V5[2]-(Celula->CZrelativo);
+    
+    L6[0] = V6[0]-(Celula->CXrelativo);
+	L6[1] = V6[1]-(Celula->CYrelativo);
+    L6[2] = V6[2]-(Celula->CZrelativo);
+    
 	dR[0] = (Vizinho->CXrelativo)-(Celula->CXrelativo);
 	dR[1] = (Vizinho->CYrelativo)-(Celula->CYrelativo);
+    dR[2] = (Vizinho->CZrelativo)-(Celula->CZrelativo);
+    
+    
     alpha[0] = (dR[0]*L1[0]+dR[1]*L1[1])/(L1[0]*L1[0]+L1[1]*L1[1]);
     alpha[1] = (dR[0]*L2[0]+dR[1]*L2[1])/(L2[0]*L2[0]+L2[1]*L2[1]);
     alpha[2] = (dR[0]*L3[0]+dR[1]*L3[1])/(L3[0]*L3[0]+L3[1]*L3[1]);
