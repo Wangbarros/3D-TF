@@ -39,7 +39,6 @@ double RandOrient();
 int main(int argc, char* argv[])
 {
     int i;
-	int j;
 	int linha,coluna, plano, maxlinha, maxcoluna, maxplano;
 	struct malha *Celula;
 	//malha *Celula = (malha*) malloc (sizeof(malha));
@@ -48,9 +47,8 @@ int main(int argc, char* argv[])
 	double orientacao, ativado;
 	double DxCA, DyCA, DzCA, Dtempo, tempo;
 	double Velocidade, G;
-	double Ox, Oy, Lc;
+	double Ox, Oy, Oz, Lc;
 	double V1[3], V2[3], V3[3], V4[3], V5[3], V6[3], alpha[6], T;
-	double dist[4];
 	double nmax0, nmax1, linear, area;
 	double b, formados_parede, formados_centro, total_parede, e_anterior_parede, e_anterior_centro, total_centro, e;
 	int numeroCelula, sorteado_centro, sorteado_parede, sorteado_orient;
@@ -154,6 +152,7 @@ int main(int argc, char* argv[])
                     
                     Ox = (((Celula+(linha*CAi*VFi) + coluna))->CXrelativo);
                     Oy = (((Celula+(linha*CAi*VFi) + coluna))->CYrelativo);
+                    Oz = (((Celula+(linha*CAi*VFi) + coluna))->CZrelativo);
                     Lc = (((Celula+(linha*CAi*VFi) + coluna))->L);
                     orientacao = (((Celula+(linha*CAi*VFi) + coluna))->orient);
                     
@@ -653,7 +652,7 @@ double Tamanho (double velocidade, double Dt) {
 
 void Vertices (struct malha *Celula, double V1[], double V2[], double V3[], double V4[], double V5[], double V6[]){
     double seno, seno2, seno3;
-    double cosseno, cosseno2, cosseno3;
+    double cosseno, cosseno2, cosseno3, A[10];
     double V10, V11, V12, V20, V21, V22, V30, V31, V32, V40, V41, V42, V50, V51, V52, V60, V61, V62;
     
     //V1 ao V4 sao os verticies no "quadrado" V5 e V6 sao os verticies de cima e de baixo
@@ -696,35 +695,45 @@ void Vertices (struct malha *Celula, double V1[], double V2[], double V3[], doub
     V60 = 0;
     V61 = 0;
     V62 = 0 - (Celula -> L);
+    
+    A[0] = cosseno3*cosseno;
+    A[1] = cosseno2*seno + seno2*seno3*cosseno;
+    A[2] = seno2*seno - cosseno2*seno3*cosseno;
+    
+    A[3] = -cosseno3*seno;
+    A[4] = cosseno2*cosseno + seno2*seno3*seno;
+    A[5] = seno2*cosseno + cosseno2*seno3*seno;
+    
+    A[6] = seno3;
+    A[7] = -seno2*cosseno3;
+    A[8] = cosseno2*cosseno3;
  
-    V1[0] = (V10*cosseno*cosseno3) + (V11*(cosseno2*seno+seno2*seno3*cosseno)) + (Celula -> CXrelativo);
-    V1[1] = -(V10*seno*cosseno3) + (V11*(cosseno*cosseno2-seno2*seno3*seno)) + (Celula -> CYrelativo);
-    V1[2] = (V10*seno3) + (V11*(-seno2*cosseno3)) + (V12*(cosseno2*cosseno3)) + (Celula -> CZrelativo);
+    V1[0] = (V10*A[0]) + (V11*A[1]) + (V12*A[2]) + (Celula -> CXrelativo);
+    V1[1] = (V10*A[3]) + (V11*A[4]) + (V12*A[5]) + (Celula -> CYrelativo);
+    V1[2] = (V10*A[6]) + (V11*A[7]) + (V12*A[8]) + (Celula -> CZrelativo);
     
-    V2[0] = (V20*cosseno*cosseno3) + (V21*(cosseno2*seno+seno2*seno3*cosseno)) + (Celula -> CXrelativo);
-    V2[1] = -(V20*seno*cosseno3) + (V21*(cosseno*cosseno2-seno2*seno3*seno)) + (Celula -> CYrelativo);
-    V2[2] = (V20*seno3) + (V21*(-seno2*cosseno3)) + (V22*(cosseno2*cosseno3)) + (Celula -> CZrelativo);
+    V2[0] = (V20*A[0]) + (V21*A[1]) + (V22*A[2]) + (Celula -> CXrelativo);
+    V2[1] = (V20*A[3]) + (V21*A[4]) + (V22*A[5]) + (Celula -> CYrelativo);
+    V2[2] = (V20*A[6]) + (V21*A[7]) + (V22*A[8]) + (Celula -> CZrelativo);
     
-    V3[0] = (V30*cosseno*cosseno3) + (V31*(cosseno2*seno+seno2*seno3*cosseno)) + (Celula -> CXrelativo);
-    V3[1] = -(V30*seno*cosseno3) + (V31*(cosseno*cosseno2-seno2*seno3*seno)) + (Celula -> CYrelativo);
-    V3[2] = (V30*seno3) + (V31*(-seno2*cosseno3)) + (V32*(cosseno2*cosseno3)) + (Celula -> CZrelativo);
+    V3[0] = (V30*A[0]) + (V31*A[1]) + (V32*A[2]) + (Celula -> CXrelativo);
+    V3[1] = (V30*A[3]) + (V31*A[4]) + (V32*A[5]) + (Celula -> CYrelativo);
+    V3[2] = (V30*A[6]) + (V31*A[7]) + (V32*A[8]) + (Celula -> CZrelativo);
     
-    V4[0] = (V40*cosseno*cosseno3) + (V41*(cosseno2*seno+seno2*seno3*cosseno)) + (Celula -> CXrelativo);
-    V4[1] = -(V40*seno*cosseno3) + (V41*(cosseno*cosseno2-seno2*seno3*seno)) + (Celula -> CYrelativo);
-    V4[2] = (V40*seno3) + (V41*(-seno2*cosseno3)) + (V42*(cosseno2*cosseno3)) + (Celula -> CZrelativo);
+    V4[0] = (V40*A[0]) + (V41*A[1]) + (V42*A[2]) + (Celula -> CXrelativo);
+    V4[1] = (V40*A[3]) + (V41*A[4]) + (V42*A[5]) + (Celula -> CYrelativo);
+    V4[2] = (V40*A[6]) + (V41*A[7]) + (V42*A[8]) + (Celula -> CZrelativo);
     
+    V5[0] = (V50*A[0]) + (V51*A[1]) + (V52*A[2]) + (Celula -> CXrelativo);
+    V5[1] = (V50*A[3]) + (V51*A[4]) + (V52*A[5]) + (Celula -> CYrelativo);
+    V5[2] = (V50*A[6]) + (V51*A[7]) + (V52*A[8]) + (Celula -> CZrelativo);
     
-    V5[0] = (V50*cosseno*cosseno3) + (V51*(cosseno2*seno+seno2*seno3*cosseno)) + (Celula -> CXrelativo);
-    V5[1] = -(V50*seno*cosseno3) + (V51*(cosseno*cosseno2-seno2*seno3*seno)) + (Celula -> CYrelativo);
-    V5[2] = (V50*seno3) + (V51*(-seno2*cosseno3)) + (V52*(cosseno2*cosseno3)) + (Celula -> CZrelativo);
+    V6[0] = (V60*A[0]) + (V61*A[1]) + (V62*A[2]) + (Celula -> CXrelativo);
+    V6[1] = (V60*A[3]) + (V61*A[4]) + (V62*A[5]) + (Celula -> CYrelativo);
+    V6[2] = (V60*A[6]) + (V61*A[7]) + (V62*A[8]) + (Celula -> CZrelativo);
     
-    V6[0] = (V60*cosseno*cosseno3) + (V61*(cosseno2*seno+seno2*seno3*cosseno)) + (Celula -> CXrelativo);
-    V6[1] = -(V60*seno*cosseno3) + (V61*(cosseno*cosseno2-seno2*seno3*seno)) + (Celula -> CYrelativo);
-    V6[2] = (V60*seno3) + (V61*(-seno2*cosseno3)) + (V62*(cosseno2*cosseno3)) + (Celula -> CZrelativo);
-    
-  //  V2[0] = (V20*cosseno) + (V21*seno) + (Celula -> CXrelativo);
+      //  V2[0] = (V20*cosseno) + (V21*seno) + (Celula -> CXrelativo);
   //  V2[1] = -(V20*seno) + (V21*cosseno) + (Celula -> CYrelativo);
-    
 
 }
 double distancia (struct malha *Celula, double A[]){
@@ -815,7 +824,7 @@ void Calpha (struct malha *Celula, struct malha *Vizinho, double V1[], double V2
 }
 
 void nucleacao (double alpha[], struct malha *Celula, double(*Abs)(double), double(*Truncado)(double), double(*distancia)(struct malha *Celula, double A[]), double V1[], double V2[], double V3[], double V4[], double V5[], double V6[], struct malha *Vizinho){
-	double Decentrado, dist[6], seno, cosseno, Salpha, dR[3], Lv[3], Lu[3];
+	double Decentrado, dist[6], Salpha, dR[3], Lv[3], Lu[3];
     
 	dist[0] = distancia(Vizinho,V1);
 	dist[1] = distancia(Vizinho,V2);
@@ -824,6 +833,7 @@ void nucleacao (double alpha[], struct malha *Celula, double(*Abs)(double), doub
     dist[4] = distancia(Vizinho,V5);
     dist[5] = distancia(Vizinho,V6);
     
+    Salpha = 2.0;
     //Combinacao de distancias. 4 em grupos de 2 tem total 6. 6 em grupos de 3 tem total 20.
     //{0,1} {0,2} {0,3} {1,2} {1,3} {2,3} para 2D
     
@@ -912,11 +922,6 @@ void nucleacao (double alpha[], struct malha *Celula, double(*Abs)(double), doub
 	//if (dist[2]<dist[0] && dist[2]<dist[1] && dist[3]<dist[0] && dist[3]<dist[1]){
 	//	Salpha = alpha[2] + alpha[3];}
     
-	seno = sin(Vizinho->orient);
-    cosseno = cos(Vizinho->orient);
-    seno = Abs(seno);
-    cosseno = Abs(cosseno);
-    
 	if ((Vizinho->orient ==2.0) && (Salpha<=1)){
         
         Vizinho->orient = Celula->orient;
@@ -925,41 +930,101 @@ void nucleacao (double alpha[], struct malha *Celula, double(*Abs)(double), doub
         Vizinho->L = Decentrado;
         dR[0] = (Vizinho->CXrelativo)-(Celula->CXrelativo);
         dR[1] = (Vizinho->CYrelativo)-(Celula->CYrelativo);
+        dR[2] = (Vizinho->CZrelativo)-(Celula->CZrelativo);
         Vizinho->ativado = 1.0;
         
-        if (dist[0]<dist[1] && dist[0]<dist[2] && dist[0]<dist[3]){
+        if (dist[0]<dist[1] && dist[0]<dist[2] && dist[0]<dist[3] && dist[0]<dist[4] && dist[0]<dist[5]){
             
             Lu[0] = V1[0]-Celula->CXrelativo;
             Lu[1] = V1[1]-Celula->CYrelativo;
+            Lu[2] = V1[2]-Celula->CZrelativo;
             Lv[0] = ((Vizinho->L)/(Celula->L))*Lu[0];
             Lv[1] = ((Vizinho->L)/(Celula->L))*Lu[1];
+            Lv[2] = ((Vizinho->L)/(Celula->L))*Lu[2];
             
             Vizinho->CXrelativo = Vizinho->CXrelativo + (Lu[0]-dR[0]-Lv[0]);
             Vizinho->CYrelativo = Vizinho->CYrelativo + (Lu[1]-dR[1]-Lv[1]);
+            Vizinho->CZrelativo = Vizinho->CZrelativo + (Lu[2]-dR[2]-Lv[2]);
             
         };
         
-        if (dist[1]<dist[0] && dist[1]<dist[2] && dist[1]<dist[3]){
+        if (dist[1]<dist[0] && dist[1]<dist[2] && dist[1]<dist[3] && dist[1]<dist[4] && dist[1]<dist[5]){
             
             Lu[0] = V2[0]-Celula->CXrelativo;
             Lu[1] = V2[1]-Celula->CYrelativo;
+            Lu[2] = V2[2]-Celula->CZrelativo;
             Lv[0] = ((Vizinho->L)/(Celula->L))*Lu[0];
             Lv[1] = ((Vizinho->L)/(Celula->L))*Lu[1];
+            Lv[2] = ((Vizinho->L)/(Celula->L))*Lu[2];
             
             Vizinho->CXrelativo = Vizinho->CXrelativo + (Lu[0]-dR[0]-Lv[0]);
             Vizinho->CYrelativo = Vizinho->CYrelativo + (Lu[1]-dR[1]-Lv[1]);
+            Vizinho->CZrelativo = Vizinho->CZrelativo + (Lu[2]-dR[2]-Lv[2]);
+            
         };
-        if (dist[2]<dist[1] && dist[2]<dist[0] && dist[2]<dist[3]){
+
+        if (dist[2]<dist[0] && dist[2]<dist[1] && dist[2]<dist[3] && dist[2]<dist[4] && dist[2]<dist[5]){
             
             Lu[0] = V3[0]-Celula->CXrelativo;
             Lu[1] = V3[1]-Celula->CYrelativo;
+            Lu[2] = V3[2]-Celula->CZrelativo;
             Lv[0] = ((Vizinho->L)/(Celula->L))*Lu[0];
             Lv[1] = ((Vizinho->L)/(Celula->L))*Lu[1];
+            Lv[2] = ((Vizinho->L)/(Celula->L))*Lu[2];
             
             Vizinho->CXrelativo = Vizinho->CXrelativo + (Lu[0]-dR[0]-Lv[0]);
             Vizinho->CYrelativo = Vizinho->CYrelativo + (Lu[1]-dR[1]-Lv[1]);
+            Vizinho->CZrelativo = Vizinho->CZrelativo + (Lu[2]-dR[2]-Lv[2]);
+            
         };
-        if (dist[3]<dist[1] && dist[3]<dist[2] && dist[3]<dist[0]){
+
+        if (dist[3]<dist[0] && dist[3]<dist[1] && dist[3]<dist[2] && dist[3]<dist[4] && dist[3]<dist[5]){
+            
+            Lu[0] = V4[0]-Celula->CXrelativo;
+            Lu[1] = V4[1]-Celula->CYrelativo;
+            Lu[2] = V4[2]-Celula->CZrelativo;
+            Lv[0] = ((Vizinho->L)/(Celula->L))*Lu[0];
+            Lv[1] = ((Vizinho->L)/(Celula->L))*Lu[1];
+            Lv[2] = ((Vizinho->L)/(Celula->L))*Lu[2];
+            
+            Vizinho->CXrelativo = Vizinho->CXrelativo + (Lu[0]-dR[0]-Lv[0]);
+            Vizinho->CYrelativo = Vizinho->CYrelativo + (Lu[1]-dR[1]-Lv[1]);
+            Vizinho->CZrelativo = Vizinho->CZrelativo + (Lu[2]-dR[2]-Lv[2]);
+            
+        };
+
+        if (dist[4]<dist[0] && dist[4]<dist[1] && dist[4]<dist[2] && dist[4]<dist[3] && dist[4]<dist[5]){
+            
+            Lu[0] = V5[0]-Celula->CXrelativo;
+            Lu[1] = V5[1]-Celula->CYrelativo;
+            Lu[2] = V5[2]-Celula->CZrelativo;
+            Lv[0] = ((Vizinho->L)/(Celula->L))*Lu[0];
+            Lv[1] = ((Vizinho->L)/(Celula->L))*Lu[1];
+            Lv[2] = ((Vizinho->L)/(Celula->L))*Lu[2];
+            
+            Vizinho->CXrelativo = Vizinho->CXrelativo + (Lu[0]-dR[0]-Lv[0]);
+            Vizinho->CYrelativo = Vizinho->CYrelativo + (Lu[1]-dR[1]-Lv[1]);
+            Vizinho->CZrelativo = Vizinho->CZrelativo + (Lu[2]-dR[2]-Lv[2]);
+            
+        };
+
+        if (dist[5]<dist[0] && dist[5]<dist[1] && dist[5]<dist[2] && dist[5]<dist[3] && dist[5]<dist[4]){
+            
+            Lu[0] = V6[0]-Celula->CXrelativo;
+            Lu[1] = V6[1]-Celula->CYrelativo;
+            Lu[2] = V6[2]-Celula->CZrelativo;
+            Lv[0] = ((Vizinho->L)/(Celula->L))*Lu[0];
+            Lv[1] = ((Vizinho->L)/(Celula->L))*Lu[1];
+            Lv[2] = ((Vizinho->L)/(Celula->L))*Lu[2];
+            
+            Vizinho->CXrelativo = Vizinho->CXrelativo + (Lu[0]-dR[0]-Lv[0]);
+            Vizinho->CYrelativo = Vizinho->CYrelativo + (Lu[1]-dR[1]-Lv[1]);
+            Vizinho->CZrelativo = Vizinho->CZrelativo + (Lu[2]-dR[2]-Lv[2]);
+            
+        };
+
+        
+        /*if (dist[3]<dist[1] && dist[3]<dist[2] && dist[3]<dist[0]){
             
             Lu[0] = V4[0]-Celula->CXrelativo;
             Lu[1] = V4[1]-Celula->CYrelativo;
@@ -968,7 +1033,7 @@ void nucleacao (double alpha[], struct malha *Celula, double(*Abs)(double), doub
             
             Vizinho->CXrelativo = Vizinho->CXrelativo + (Lu[0]-dR[0]-Lv[0]);
             Vizinho->CYrelativo = Vizinho->CYrelativo + (Lu[1]-dR[1]-Lv[1]);
-        };
+        }; */
     }
 	
     
