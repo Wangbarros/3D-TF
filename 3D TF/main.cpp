@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
 	Dtempo = 0.0001; //Passo de tempo
 	linha = 100;
 	coluna = 100;
-    plano = 3;
+    plano = 5;
     maxlinha = linha;
     maxcoluna = coluna;
     maxplano = plano;
@@ -828,20 +828,20 @@ void Vertices (struct malha *Celula, double V1[], double V2[], double V3[], doub
     cosseno3 = Abs(cosseno3);
 
     V10 = 0 + ((Celula -> L));
-    V11 = 0 + ((Celula -> L));
+    V11 = 0; //+ ((Celula -> L));
     V11 = 0;
     V12 = 0;
     
     V20 = 0 - ((Celula -> L));
-    V21 = 0 + ((Celula -> L));
+    V21 = 0; //+ ((Celula -> L));
     V22 = 0;
     
-    V30 = 0 - ((Celula -> L));
+    V30 = 0;// - ((Celula -> L));
     V31 = 0 - ((Celula -> L));
     V32 = 0;
     
-    V40 = 0 + ((Celula -> L));
-    V41 = 0 - ((Celula -> L));
+    V40 = 0; //+ ((Celula -> L));
+    V41 = 0 + ((Celula -> L)); //- ((Celula -> L));
     V42 = 0;
     
     V50 = 0;
