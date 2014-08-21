@@ -90,7 +90,6 @@ int main(int argc, char* argv[])
     for(linha=0;linha<(maxlinha);linha++){
         for(coluna=0;coluna<(maxcoluna);coluna++){
             //CondiÁoes iniciais
-                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient = 2.0; //Celulas com orientacao 2.0 siguinifica que nao estao nucleadas
              //   ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr = 0.5+(G*DyCA*((300-linha)/2));
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr = 0.5+(G*DyCA*((300-linha)/2));
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient2 = 0;
@@ -458,7 +457,7 @@ int main(int argc, char* argv[])
             
             
             
-            if ( (((Celula+((i*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna) ) -> orient) != 2.0)&&(((Celula+((i*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna) ) -> orient) != 3.0) && (Celula+((i*maxplano*maxplano)+(linha*maxcoluna) + coluna) ) -> ativado == 1.0  ){ //2.0 È uma celula n„o nucleada. Essa funcao acaba no fill.
+            if ( (((Celula+((i*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna) ) -> orient) != 2.0)&&(((Celula+((i*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna) ) -> orient) != 3.0)  ){ //2.0 È uma celula n„o nucleada. Essa funcao acaba no fill.
                 
                 xpos=(DxCA/2.0) + coluna*DxCA; //DxCA È a distancia entre celulas do automato celular em x
                 ypos= tamanhoy - (DyCA/2.0) - (linha*DyCA); //DyCA È a distancia entre celulas do automato celular em y
@@ -829,20 +828,20 @@ void Vertices (struct malha *Celula, double V1[], double V2[], double V3[], doub
     cosseno3 = Abs(cosseno3);
 
     V10 = 0 + ((Celula -> L));
-    V11 = 0; //+ ((Celula -> L));
+    V11 = 0 + ((Celula -> L));
     V11 = 0;
     V12 = 0;
     
     V20 = 0 - ((Celula -> L));
-    V21 = 0; //+ ((Celula -> L));
+    V21 = 0 + ((Celula -> L));
     V22 = 0;
     
-    V30 = 0;// - ((Celula -> L));
+    V30 = 0 - ((Celula -> L));
     V31 = 0 - ((Celula -> L));
     V32 = 0;
     
-    V40 = 0; //+ ((Celula -> L));
-    V41 = 0 + ((Celula -> L)); //- ((Celula -> L));
+    V40 = 0 + ((Celula -> L));
+    V41 = 0 - ((Celula -> L)); //- ((Celula -> L));
     V42 = 0;
     
     V50 = 0;
@@ -925,7 +924,7 @@ double Truncado (double Lado) {
     c = aLado;
     d = aLado;
     l = (2.5)/100000; //EspaÁo entre dois centros de duas celulas
-    l = l*(sqrt(2.0));
+    l = l*(sqrt(3.0));
     if (l<c){
         c = l;}
     if (l<d) {
