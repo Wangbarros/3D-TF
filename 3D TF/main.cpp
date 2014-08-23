@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
     
     
 	tempo = 0;
-	Dtempo = 0.0001; //Passo de tempo
+	Dtempo = 0.001; //Passo de tempo
 	linha = 100;
 	coluna = 100;
     plano = 5;
@@ -92,8 +92,8 @@ int main(int argc, char* argv[])
             //CondiÁoes iniciais
              //   ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr = 0.5+(G*DyCA*((300-linha)/2));
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr = 0.5+(G*DyCA*((300-linha)/2));
-                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient2 = 0;
-                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient3 = 0;
+                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient2 = 0.0001;
+                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient3 = -0.0001;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->L = 0;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->fst = 0;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->CXrelativo = coluna*DxCA;
@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->CZrelativo = plano*DzCA;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->ativado = 0;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr_crit = 0;
-                ((Celula+(plano*maxlinha*maxcoluna)+(linha*maxcoluna) + coluna)) -> orient = 2.0;
+                ((Celula+(plano*maxlinha*maxcoluna)+(linha*maxcoluna) + coluna))-> orient = 2.0;
         }}};
     
 	//Nucleacao da celula central
@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
                                 if (  ((((Celula+(plano*maxlinha*maxcoluna)+((linha-1)*maxcoluna) + coluna))->orient) !=2.0)){
                                     if(  ((((Celula+((plano+1)*maxlinha*maxcoluna)+(linha*maxcoluna) + coluna))->orient) !=2.0)){
                                         if(  ((((Celula+((plano-1)*maxlinha*maxcoluna)+(linha*maxcoluna) + coluna))->orient) !=2.0)){
-                                    //(((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient) = 3.0;
+                                    (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient) = 3.0;
                                     (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->ativado) = 0;
                                         }}}}}}}
                 
@@ -801,7 +801,7 @@ double Tamanho (double velocidade, double Dt) {
     double Tamanho;
     
     Tamanho = velocidade*Dt;
-    Tamanho = (Tamanho)/(sqrt(2.0));
+    Tamanho = (Tamanho)/(sqrt(3.0));
     Tamanho = (Tamanho);
     
     return Tamanho; }
@@ -828,20 +828,20 @@ void Vertices (struct malha *Celula, double V1[], double V2[], double V3[], doub
     cosseno3 = Abs(cosseno3);
 
     V10 = 0 + ((Celula -> L));
-    V11 = 0 + ((Celula -> L));
+    V11 = 0;// + ((Celula -> L));
     V11 = 0;
     V12 = 0;
     
     V20 = 0 - ((Celula -> L));
-    V21 = 0 + ((Celula -> L));
+    V21 = 0;// + ((Celula -> L));
     V22 = 0;
     
-    V30 = 0 - ((Celula -> L));
+    V30 = 0;// - ((Celula -> L));
     V31 = 0 - ((Celula -> L));
     V32 = 0;
     
-    V40 = 0 + ((Celula -> L));
-    V41 = 0 - ((Celula -> L)); //- ((Celula -> L));
+    V40 = 0;// + ((Celula -> L));
+    V41 = 0 + ((Celula -> L)); //- ((Celula -> L));
     V42 = 0;
     
     V50 = 0;
@@ -920,16 +920,16 @@ double Truncado (double Lado) {
     double c;
     double d;
     double l;
-    aLado = Lado/2;
-    c = aLado;
-    d = aLado;
+    aLado = Lado;
+    c = aLado/2;
+    d = aLado/2;
     l = (2.5)/100000; //EspaÁo entre dois centros de duas celulas
     l = l*(sqrt(3.0));
     if (l<c){
         c = l;}
     if (l<d) {
         d = l;}
-    NovoLado = ((c+d));
+    NovoLado = (sqrt(2.0)*(c+d)/(sqrt(3.0)));
     NovoLado = NovoLado;
     
     return NovoLado;
@@ -1196,7 +1196,7 @@ void nucleacao (double alpha[], struct malha *Celula, double(*Abs)(double), doub
     
 }
 double formacao(double deltaT, double Tsigma, double Tnuc){
-	double formados, e;
+	double e;
     
 	e = 0.5*(( erf(Tnuc/(sqrt(2.0)*Tsigma)) )- ( erf((Tnuc-deltaT)/(sqrt(2.0)*Tsigma)) ));
     
@@ -1238,7 +1238,7 @@ int RandCentro(int linha,int coluna) {
 	return a;
 }
 int RandParede(int linha, int coluna){
-	int total, vetor[1210], i, j;
+	int vetor[1210], i, j;
     
 	for (i=0;i<coluna;i++){
 		vetor[i] = i;
