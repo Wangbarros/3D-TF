@@ -1,6 +1,6 @@
 set (gca,'PlotBoxAspectRatio',[1 1 1],'Xlim',[0,0.02],'Ylim',[0,0.02])
 hold on
-title('Malha(100X100) Dt(0.0001 s) tempo(3 s)') 
+title('Malha(100X100) Dt(0.001 s) tempo(5 s)') 
 hold on
 ylabel('metros') 
 hold on 
