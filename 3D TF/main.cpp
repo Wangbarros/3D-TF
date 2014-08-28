@@ -61,12 +61,12 @@ int main(int argc, char* argv[])
     c1,c2,c3;
     FILE *filePointer;
     arquivo = 1;
-    DxCA = (3.0)/100000;  // = 50um = 5 *10^6 densidade = 400*10^6 densidade 1600*10^6 = 25/10^6 = 25um  multiplica-se por 2 para o DxCA e DyCA
-    DyCA = (3.0)/100000;
-    DzCA = (3.0)/100000;
-    tamanhox = (2.0/100);
-    tamanhoy = (2.0/100);
-    tamanhoz = (2.0)/100;
+    DxCA = (3.0)/10000;  // = 50um = 5 *10^6 densidade = 400*10^6 densidade 1600*10^6 = 25/10^6 = 25um  multiplica-se por 2 para o DxCA e DyCA
+    DyCA = (3.0)/10000;
+    DzCA = (3.0)/10000;
+    tamanhox = (3.0/100);
+    tamanhoy = (3.0/100);
+    tamanhoz = (3.0)/100;
 	CAi = 10;
 	CAj = 10;
     CAz = 10;
@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
 	Dtempo = 0.01; //Passo de tempo
 	linha = 100;
 	coluna = 100;
-    plano = 50;
+    plano = 10;
     maxlinha = linha;
     maxcoluna = coluna;
     maxplano = plano;
@@ -92,8 +92,8 @@ int main(int argc, char* argv[])
             //CondiÁoes iniciais
              //   ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr = 0.5+(G*DyCA*((300-linha)/2));
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr = 10 +(G*DyCA*((300-linha)/2));
-                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient2 = 0.2618;
-                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient3 = 0.0;
+                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient2 = 0.0;
+                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient3 = 0.2618;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->L = 0;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->fst = 0;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->CXrelativo = coluna*DxCA;
@@ -103,12 +103,12 @@ int main(int argc, char* argv[])
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr_crit = 0;
                 ((Celula+(plano*maxlinha*maxcoluna)+(linha*maxcoluna) + coluna))-> orient = 2.0;
         }}};
-    
+        
 	//Nucleacao da celula central
-	((Celula + 244949) -> orient) = (0.0); //0.524 = 30graus +- //0.26 no tf  60 = 1.04719755
-	((Celula + 244949) -> ativado) = 1.0;
+	((Celula + 44949) -> orient) = (0.2618); //0.524 = 30graus 60 = 1.047197550 0.2618 para 15
+	((Celula + 44949) -> ativado) = 1.0;
     
-    while (tempo<10){
+    while (tempo<70){
         //Inicio do programa de crescimento
     for(plano=0;plano<maxplano;plano++){
         for(linha=0;linha<(maxlinha);linha++){
@@ -149,7 +149,7 @@ int main(int argc, char* argv[])
                     
                     Velocidade = Vcresc (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna)));
                     
-                    (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->L) = (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->L)+ (Tamanho (Velocidade, Dtempo));
+                    (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->L) =(((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->L)+ (Tamanho (Velocidade, Dtempo)) ;
                     
                //     Ox = (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->CXrelativo);
                //     Oy = (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->CYrelativo);
@@ -801,7 +801,6 @@ double Tamanho (double velocidade, double Dt) {
     double Tamanho;
     
     Tamanho = velocidade*Dt;
-    Tamanho = (Tamanho)/(sqrt(3.0));
     Tamanho = (Tamanho);
     
     return Tamanho; }
@@ -923,7 +922,7 @@ double Truncado (double Lado) {
     aLado = Lado;
     c = aLado/2;
     d = aLado/2;
-    l = (2.5)/100000; //EspaÁo entre dois centros de duas celulas
+    l = (3.0)/10000; //EspaÁo entre dois centros de duas celulas
     l = l*(sqrt(3.0));
     if (l<c){
         c = l;}
