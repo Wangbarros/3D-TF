@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
 	Dtempo = 0.01; //Passo de tempo
 	linha = 100;
 	coluna = 100;
-    plano = 10;
+    plano = 20;
     maxlinha = linha;
     maxcoluna = coluna;
     maxplano = plano;
@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
             //CondiÁoes iniciais
              //   ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr = 0.5+(G*DyCA*((300-linha)/2));
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr = 10 +(G*DyCA*((300-linha)/2));
-                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient2 = 0.0;
+                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient2 = 0.0001;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient3 = 0.2618;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->L = 0;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->fst = 0;
@@ -103,12 +103,12 @@ int main(int argc, char* argv[])
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr_crit = 0;
                 ((Celula+(plano*maxlinha*maxcoluna)+(linha*maxcoluna) + coluna))-> orient = 2.0;
         }}};
-        
-	//Nucleacao da celula central
-	((Celula + 44949) -> orient) = (0.2618); //0.524 = 30graus 60 = 1.047197550 0.2618 para 15
-	((Celula + 44949) -> ativado) = 1.0;
     
-    while (tempo<70){
+	//Nucleacao da celula central
+	((Celula + 104949) -> orient) = (0.2618); //0.524 = 30graus 60 = 1.047197550 0.2618 para 15
+	((Celula + 104949) -> ativado) = 1.0;
+    
+    while (tempo<50){
         //Inicio do programa de crescimento
     for(plano=0;plano<maxplano;plano++){
         for(linha=0;linha<(maxlinha);linha++){
@@ -836,11 +836,11 @@ void Vertices (struct malha *Celula, double V1[], double V2[], double V3[], doub
     V22 = 0;
     
     V30 = 0;// - ((Celula -> L));
-    V31 = 0 - ((Celula -> L));
+    V31 = 0 + ((Celula -> L));
     V32 = 0;
     
     V40 = 0;// + ((Celula -> L));
-    V41 = 0 + ((Celula -> L)); //- ((Celula -> L));
+    V41 = 0 - ((Celula -> L)); //- ((Celula -> L));
     V42 = 0;
     
     V50 = 0;
@@ -1081,6 +1081,9 @@ void nucleacao (double alpha[], struct malha *Celula, double(*Abs)(double), doub
 	if ((Vizinho->orient ==2.0) && (Salpha<=1)){
         
         Vizinho->orient = Celula->orient;
+        Vizinho->orient2 = Celula->orient2;
+        Vizinho->orient3 = Celula->orient3;
+        
         Decentrado = Celula->L;
         Decentrado = Truncado(Decentrado);
         Vizinho->L = Decentrado;
