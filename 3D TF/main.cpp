@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 	double b, formados_parede, formados_centro, total_parede, e_anterior_parede, e_anterior_centro, total_centro, e;
 	int numeroCelula, sorteado_centro, sorteado_parede, sorteado_orient;
 	int arquivo;
-	char nome[100];
+	char nome[100], nome2[100];
 	double xpos,ypos,
     x1,x2,x3,x4,
     y1,y2,y3,y4,
@@ -61,9 +61,9 @@ int main(int argc, char* argv[])
     c1,c2,c3;
     FILE *filePointer;
     arquivo = 1;
-    DxCA = (3.0)/10000;  // = 50um = 5 *10^6 densidade = 400*10^6 densidade 1600*10^6 = 25/10^6 = 25um  multiplica-se por 2 para o DxCA e DyCA
-    DyCA = (3.0)/10000;
-    DzCA = (3.0)/10000;
+    DxCA = (1.0)/10000;  // = 50um = 5 *10^6 densidade = 400*10^6 densidade 1600*10^6 = 25/10^6 = 25um  multiplica-se por 2 para o DxCA e DyCA
+    DyCA = (1.0)/10000;
+    DzCA = (1.0)/10000;
     tamanhox = (3.0/100);
     tamanhoy = (3.0/100);
     tamanhoz = (3.0)/100;
@@ -79,11 +79,11 @@ int main(int argc, char* argv[])
 	Dtempo = 0.01; //Passo de tempo
 	linha = 100;
 	coluna = 100;
-    plano = 20;
+    plano = 100;
     maxlinha = linha;
     maxcoluna = coluna;
     maxplano = plano;
-	G = 0;
+	G = 0.0;
 	Celula = (struct malha *) malloc ( ((plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna)*sizeof(struct malha));
 	//Condicoes iniciais de todas as celulas
     for(plano=0;plano<(maxplano);plano++){
@@ -91,9 +91,9 @@ int main(int argc, char* argv[])
         for(coluna=0;coluna<(maxcoluna);coluna++){
             //CondiÁoes iniciais
              //   ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr = 0.5+(G*DyCA*((300-linha)/2));
-                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr = 10 +(G*DyCA*((300-linha)/2));
-                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient2 = 0.0001;
-                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient3 = 0.2618;
+                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr = 2.0 +(G*DyCA*((maxlinha-linha)/2));
+                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient2 = 0;
+                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient3 = 0;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->L = 0;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->fst = 0;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->CXrelativo = coluna*DxCA;
@@ -105,10 +105,9 @@ int main(int argc, char* argv[])
         }}};
     
 	//Nucleacao da celula central
-	((Celula + 104949) -> orient) = (0.2618); //0.524 = 30graus 60 = 1.047197550 0.2618 para 15
-	((Celula + 104949) -> ativado) = 1.0;
-    
-    while (tempo<50){
+	((Celula + 494949) -> orient) = (0); //0.524 = 30graus 60 = 1.047197550 0.2618 para 15
+	((Celula + 494949) -> ativado) = 1.0;
+    while (tempo<7){
         //Inicio do programa de crescimento
     for(plano=0;plano<maxplano;plano++){
         for(linha=0;linha<(maxlinha);linha++){
@@ -129,10 +128,11 @@ int main(int argc, char* argv[])
                                 if (  ((((Celula+(plano*maxlinha*maxcoluna)+((linha-1)*maxcoluna) + coluna))->orient) !=2.0)){
                                     if(  ((((Celula+((plano+1)*maxlinha*maxcoluna)+(linha*maxcoluna) + coluna))->orient) !=2.0)){
                                         if(  ((((Celula+((plano-1)*maxlinha*maxcoluna)+(linha*maxcoluna) + coluna))->orient) !=2.0)){
-                                    (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient) = 3.0;
+                                   // (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient) = 3.0;
                                     (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->ativado) = 0;
                                         }}}}}}}
                 
+               //Arrumar as celulas de canto!
                 
                 
                 (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr) =  (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr)+(0.1*Dtempo); //Super resfriamento sem considerar o campo
@@ -420,21 +420,9 @@ int main(int argc, char* argv[])
                 }}}}
         
         
-        
-        
-        
-        
-        
-        
         tempo = tempo+Dtempo;
         
     }
-     
-     
-    
-    
-    
-    
     //Aqui abaxo È a impressao do txt
     i = 0;
     for(i = 0; i<(maxplano); i++){
@@ -453,9 +441,6 @@ int main(int argc, char* argv[])
     
     for(linha=0;linha<(maxlinha);linha++){
         for(coluna=0;coluna<(maxcoluna);coluna++){
-            
-            
-            
             
             if ( (((Celula+((i*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna) ) -> orient) != 2.0)&&(((Celula+((i*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna) ) -> orient) != 3.0)  ){ //2.0 È uma celula n„o nucleada. Essa funcao acaba no fill.
                 
@@ -495,10 +480,6 @@ int main(int argc, char* argv[])
                         }
                     }
                 }
-                
-                
-                
-                
                 
                 if ( ((Celula+((i*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna) ) -> orient) > -1.0 ){
                     c1=0.8; //c1,c2,c3 È uma codificaÁao para a cor a ser usada no quadrado de orientaÁao X
@@ -762,6 +743,53 @@ int main(int argc, char* argv[])
             }
         }
     }
+    sprintf(nome2,"/Users/chenwang/Dropbox/TF/3D TF/tecplot.txt");
+    filePointer = fopen(nome2,"w");
+    fprintf(filePointer, "TITLE     = \"Phase Field 3D - Template\"\n");
+    fprintf(filePointer, "VARIABLES = \"x\"\n");
+    fprintf(filePointer, "\"y\"\n");
+    fprintf(filePointer, "\"z\"\n");
+    fprintf(filePointer, "\"<greek>f</greek>\"\n");
+    fprintf(filePointer, "\"T\"\n");
+    fprintf(filePointer, "TEXT\n");
+    fprintf(filePointer, "CS=FRAME\n");
+    fprintf(filePointer, "X=19.4778098147,Y=94.7994180807\n");
+    fprintf(filePointer, "C=BLACK\n");
+    fprintf(filePointer, "S=LOCAL\n");
+    fprintf(filePointer, "HU=POINT\n");
+    fprintf(filePointer, "LS=1 AN=LEFT\n");
+    fprintf(filePointer, "BXM=20 LT=0.1 BXO=BLACK BXF=WHITE\n");
+    fprintf(filePointer, "F=HELV-BOLD\n");
+    fprintf(filePointer, "H=11 A=0\n");
+    fprintf(filePointer, "MFC=\"\"\n");
+    fprintf(filePointer, "CLIPPING=CLIPTOVIEWPORT\n");
+    fprintf(filePointer, "T=\"T\"\n");
+    fprintf(filePointer, "TEXT\n");
+    fprintf(filePointer, "CS=FRAME\n");
+    fprintf(filePointer, "X=20.6222846152,Y=13.6575451228\n");
+    fprintf(filePointer, "C=BLACK\n");
+    fprintf(filePointer, "S=LOCAL\n");
+    fprintf(filePointer, "HU=POINT\n");
+    fprintf(filePointer, "LS=1 AN=LEFT\n");
+    fprintf(filePointer, "BXM=20 LT=0.1 BXO=BLACK BXF=WHITE\n");
+    fprintf(filePointer, "F=HELV-BOLD\n");
+    fprintf(filePointer, "H=11 A=0\n");
+    fprintf(filePointer, "MFC=\"\"\n");
+    fprintf(filePointer, "CLIPPING=CLIPTOVIEWPORT\n");
+    fprintf(filePointer, "T=\"t* = ???\"\n");
+    fprintf(filePointer, "ZONE T=\"Phase Field 3D\"\n");
+    fprintf(filePointer, " STRANDID=0, SOLUTIONTIME=0\n");
+    fprintf(filePointer, " I=100, J=100, K=100, ZONETYPE=Ordered\n");
+    fprintf(filePointer, " DATAPACKING=POINT\n");
+    fprintf(filePointer, " DT=(SINGLE SINGLE SINGLE SINGLE SINGLE )\n");
+    
+    for(plano=0;plano<(maxplano);plano++){
+        for(linha=0;linha<(maxlinha);linha++){
+            for(coluna=0;coluna<(maxcoluna);coluna++){
+                fprintf(filePointer, "%.4f    %.4f    %.4f    %f    1.000\n",coluna*DxCA, linha*DyCA, plano*DzCA, ((Celula+(plano*maxlinha*maxcoluna)+(linha*maxcoluna) + coluna))-> orient);
+            }}}
+    
+    
      
     fclose (filePointer);
     
@@ -789,7 +817,7 @@ double Vcresc (struct malha *Celula){
 	double V;
 	double Sresfr;
 	Sresfr = (Celula->Sresfr);
-	a2 = ((1.0)/1000000);  //8.26*10^-6 ou 2.9/10^6 para 7%Si ou 10^-4
+	a2 = ((1.0)/10000);  //8.26*10^-6 ou 2.9/10^6 para 7%Si ou 10^-4
 	a3 = ((0.0)/1000000); //8.18/10^5  ou 1.49/10^6 ou 0
     
 	V = (a2*Sresfr*Sresfr) + (a3*Sresfr*Sresfr*Sresfr);
@@ -828,7 +856,6 @@ void Vertices (struct malha *Celula, double V1[], double V2[], double V3[], doub
 
     V10 = 0 + ((Celula -> L));
     V11 = 0;// + ((Celula -> L));
-    V11 = 0;
     V12 = 0;
     
     V20 = 0 - ((Celula -> L));
@@ -857,7 +884,7 @@ void Vertices (struct malha *Celula, double V1[], double V2[], double V3[], doub
     A[2] = seno2*seno - cosseno2*seno3*cosseno;
     
     A[3] = -cosseno3*seno;
-    A[4] = cosseno2*cosseno + seno2*seno3*seno;
+    A[4] = cosseno2*cosseno - seno2*seno3*seno;
     A[5] = seno2*cosseno + cosseno2*seno3*seno;
     
     A[6] = seno3;
@@ -887,9 +914,6 @@ void Vertices (struct malha *Celula, double V1[], double V2[], double V3[], doub
     V6[0] = (V60*A[0]) + (V61*A[1]) + (V62*A[2]) + (Celula -> CXrelativo);
     V6[1] = (V60*A[3]) + (V61*A[4]) + (V62*A[5]) + (Celula -> CYrelativo);
     V6[2] = (V60*A[6]) + (V61*A[7]) + (V62*A[8]) + (Celula -> CZrelativo);
-    
-      //  V2[0] = (V20*cosseno) + (V21*seno) + (Celula -> CXrelativo);
-  //  V2[1] = -(V20*seno) + (V21*cosseno) + (Celula -> CYrelativo);
 
 }
 double distancia (struct malha *Celula, double A[]){
@@ -922,14 +946,14 @@ double Truncado (double Lado) {
     aLado = Lado;
     c = aLado/2;
     d = aLado/2;
-    l = (3.0)/10000; //EspaÁo entre dois centros de duas celulas
+    l = (1.0)/10000; //EspaÁo entre dois centros de duas celulas
     l = l*(sqrt(3.0));
     if (l<c){
         c = l;}
     if (l<d) {
         d = l;}
     NovoLado = (sqrt(2.0)*(c+d)/(sqrt(3.0)));
-    NovoLado = NovoLado;
+    NovoLado = NovoLado/2;
     
     return NovoLado;
 }
@@ -1182,17 +1206,6 @@ void nucleacao (double alpha[], struct malha *Celula, double(*Abs)(double), doub
             
         };
 
-        
-        /*if (dist[3]<dist[1] && dist[3]<dist[2] && dist[3]<dist[0]){
-            
-            Lu[0] = V4[0]-Celula->CXrelativo;
-            Lu[1] = V4[1]-Celula->CYrelativo;
-            Lv[0] = ((Vizinho->L)/(Celula->L))*Lu[0];
-            Lv[1] = ((Vizinho->L)/(Celula->L))*Lu[1];
-            
-            Vizinho->CXrelativo = Vizinho->CXrelativo + (Lu[0]-dR[0]-Lv[0]);
-            Vizinho->CYrelativo = Vizinho->CYrelativo + (Lu[1]-dR[1]-Lv[1]);
-        }; */
     }
 	
     
