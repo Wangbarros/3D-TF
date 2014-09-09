@@ -61,9 +61,9 @@ int main(int argc, char* argv[])
     c1,c2,c3;
     FILE *filePointer;
     arquivo = 1;
-    DxCA = (1.0)/10000;  // = 50um = 5 *10^6 densidade = 400*10^6 densidade 1600*10^6 = 25/10^6 = 25um  multiplica-se por 2 para o DxCA e DyCA
-    DyCA = (1.0)/10000;
-    DzCA = (1.0)/10000;
+    DxCA = (3.0)/10000;  // = 50um = 5 *10^6 densidade = 400*10^6 densidade 1600*10^6 = 25/10^6 = 25um  multiplica-se por 2 para o DxCA e DyCA
+    DyCA = (3.0)/10000;
+    DzCA = (3.0)/10000;
     tamanhox = (3.0/100);
     tamanhoy = (3.0/100);
     tamanhoz = (3.0)/100;
@@ -79,11 +79,11 @@ int main(int argc, char* argv[])
 	Dtempo = 0.01; //Passo de tempo
 	linha = 100;
 	coluna = 100;
-    plano = 100;
+    plano = 10;
     maxlinha = linha;
     maxcoluna = coluna;
     maxplano = plano;
-	G = 0.0;
+	G = 0;
 	Celula = (struct malha *) malloc ( ((plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna)*sizeof(struct malha));
 	//Condicoes iniciais de todas as celulas
     for(plano=0;plano<(maxplano);plano++){
@@ -91,9 +91,9 @@ int main(int argc, char* argv[])
         for(coluna=0;coluna<(maxcoluna);coluna++){
             //CondiÁoes iniciais
              //   ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr = 0.5+(G*DyCA*((300-linha)/2));
-                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr = 2.0 +(G*DyCA*((maxlinha-linha)/2));
+                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr = 10.0 +(G*DzCA*((maxplano-plano)));
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient2 = 0;
-                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient3 = 0;
+                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient3 = 0.27;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->L = 0;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->fst = 0;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->CXrelativo = coluna*DxCA;
@@ -105,9 +105,9 @@ int main(int argc, char* argv[])
         }}};
 
 	//Nucleacao da celula central
-	((Celula + 494949) -> orient) = (0.2618); //0.524 = 30graus 60 = 1.047197550 0.2618 para 15
-	((Celula + 494949) -> ativado) = 1.0;
-    while (tempo<6){
+	((Celula + 44949) -> orient) = (0.26); //0.524 = 30graus 60 = 1.047197550 0.2618 para 15
+	((Celula + 44949) -> ativado) = 1.0;
+    while (tempo<10){
         //Inicio do programa de crescimento
     for(plano=0;plano<maxplano;plano++){
         for(linha=0;linha<(maxlinha);linha++){
@@ -128,7 +128,7 @@ int main(int argc, char* argv[])
                                 if (  ((((Celula+(plano*maxlinha*maxcoluna)+((linha-1)*maxcoluna) + coluna))->orient) !=2.0)){
                                     if(  ((((Celula+((plano+1)*maxlinha*maxcoluna)+(linha*maxcoluna) + coluna))->orient) !=2.0)){
                                         if(  ((((Celula+((plano-1)*maxlinha*maxcoluna)+(linha*maxcoluna) + coluna))->orient) !=2.0)){
-                                   // (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient) = 3.0;
+                                    (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient) = 3.0;
                                     (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->ativado) = 0;
                                         }}}}}}}
 
@@ -817,7 +817,7 @@ double Vcresc (struct malha *Celula){
 	double V;
 	double Sresfr;
 	Sresfr = (Celula->Sresfr);
-	a2 = ((1.0)/10000);  //8.26*10^-6 ou 2.9/10^6 para 7%Si ou 10^-4
+	a2 = ((1.0)/1000000);  //8.26*10^-6 ou 2.9/10^6 para 7%Si ou 10^-4
 	a3 = ((0.0)/1000000); //8.18/10^5  ou 1.49/10^6 ou 0
 
 	V = (a2*Sresfr*Sresfr) + (a3*Sresfr*Sresfr*Sresfr);
@@ -946,7 +946,7 @@ double Truncado (double Lado) {
     aLado = Lado;
     c = aLado/2;
     d = aLado/2;
-    l = (1.0)/10000; //EspaÁo entre dois centros de duas celulas
+    l = (3.0)/10000; //EspaÁo entre dois centros de duas celulas
     l = l*(sqrt(3.0));
     if (l<c){
         c = l;}
@@ -1242,37 +1242,39 @@ double erf(double x)
 
     return sinal*y;
 }
-int RandCentro(int linha,int coluna) {
-	int a,b;
+int RandCentro(int maxlinha,int maxcoluna, int maxplano) {
+	int a,b, c;
 
-	a = rand() % (linha-1);
-	b = rand() % (coluna-1);
+	a = rand() % (maxlinha-1);
+	b = rand() % (maxcoluna-1);
+    c = rand() % (maxplano-1);
 
-	a = ((a+1)*300) + (b+1);
+	a = ((c+1)*maxlinha*maxcoluna) + ((a+1)*maxcoluna) + (b+1);
 
 	return a;
 }
-int RandParede(int linha, int coluna){
-	int vetor[1210], i, j;
+int RandParede(int maxlinha, int maxcoluna, int maxplano){
+	int vetor[1000000], total, i, j, celula, plano, coluna, linha;
+    
+    i = 0;
+    for (plano=0;plano<maxplano;plano++){
+        for (linha=0;linha<maxlinha;linha++){
+            for (coluna=0;coluna<maxcoluna;coluna++){
+                celula = (plano*maxlinha*maxcoluna) + (linha*maxcoluna) + coluna;
+                if ( (plano == 0) || (coluna == 0) || (linha == 0) ){
+                    vetor[i] = celula;
+                    i = i+1;
+                }
+                
+            }
+            
+        }
+        
+    }
 
-	for (i=0;i<coluna;i++){
-		vetor[i] = i;
-	}
-	for (i=1;i<300;i++){
-		vetor[i+299] = (coluna*i);
-	}
-	for (i=1;i<300;i++){
-		vetor[i+598] = (coluna*i)+(coluna-1);
-
-	}
-	for (i=0;i<298;i++){
-		vetor[i+898] = 89701+i;
-
-	}
-	//for(i=0;i<1196;i++){
-
-	//	printf(" %d ",vetor[i]);}
-    j = rand() % (1196);
+	total = (2*maxcoluna*maxlinha) + (2*maxcoluna*maxplano) + (2*maxlinha*maxplano);
+    
+    j = rand() % (total);
 	return vetor[j];
 }
 double RandOrient (){
