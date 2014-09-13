@@ -30,16 +30,17 @@ void Calpha (struct malha *Celula, struct malha *Vizinho, double V1[], double V2
 void nucleacao (double alpha[], struct malha *Celula, double(*Abs)(double), double(*Truncado)(double), double(*distancia)(struct malha *Celula, double A[]), double V1[], double V2[], double V3[], double V4[], double V5[], double V6[], struct malha *Vizinho);
 double formacao(double deltaT, double Tsigma, double Tnuc);
 double erf(double x);
-int RandCentro(int linha,int coluna);
-int RandParede(int linha, int coluna);
+int RandCentro(int maxlinha,int maxcoluna, int maxplano);
+int RandParede(int maxlinha, int maxcoluna, int maxplano, int celula[]);
 double round(double n);
 double RandOrient();
 //Programa principal------------------------------------------
 //#pragma argsused
 int main(int argc, char* argv[])
 {
-    int i;
+    int i, j, j2;
 	int linha,coluna, plano, maxlinha, maxcoluna, maxplano;
+    int *parede;
 	struct malha *Celula;
 	//malha *Celula = (malha*) malloc (sizeof(malha));
 	int CAi, VFi, CAj, VFj, CAz, VFz;
@@ -49,9 +50,9 @@ int main(int argc, char* argv[])
 	double Velocidade, G;
 	double Ox, Oy, Oz, Lc;
 	double V1[3], V2[3], V3[3], V4[3], V5[3], V6[3], alpha[6], T;
-	double nmax0, nmax1, linear, area;
-	double b, formados_parede, formados_centro, total_parede, e_anterior_parede, e_anterior_centro, total_centro, e;
-	int numeroCelula, sorteado_centro, sorteado_parede, sorteado_orient;
+	double nmax0, nmax1, area, volume;
+	double b, formados_parede, formados_centro, total_parede, e_anterior_parede, e_anterior_centro, total_centro;
+	int numeroCelula, sorteado_centro, sorteado_parede;
 	int arquivo;
 	char nome[100], nome2[100];
 	double xpos,ypos,
@@ -61,9 +62,9 @@ int main(int argc, char* argv[])
     c1,c2,c3;
     FILE *filePointer;
     arquivo = 1;
-    DxCA = (3.0)/10000;  // = 50um = 5 *10^6 densidade = 400*10^6 densidade 1600*10^6 = 25/10^6 = 25um  multiplica-se por 2 para o DxCA e DyCA
-    DyCA = (3.0)/10000;
-    DzCA = (3.0)/10000;
+    DxCA = (2.5)/100000;  // = 50um = 5 *10^6 densidade = 400*10^6 densidade 1600*10^6 = 25/10^6 = 25um  multiplica-se por 2 para o DxCA e DyCA
+    DyCA = (2.5)/100000; //    3.0/10000
+    DzCA = (2.5)/100000;
     tamanhox = (3.0/100);
     tamanhoy = (3.0/100);
     tamanhoz = (3.0)/100;
@@ -77,23 +78,25 @@ int main(int argc, char* argv[])
 
 	tempo = 0;
 	Dtempo = 0.01; //Passo de tempo
-	linha = 100;
-	coluna = 100;
-    plano = 10;
+	linha = 300;
+	coluna = 300;
+    plano = 300;
     maxlinha = linha;
     maxcoluna = coluna;
     maxplano = plano;
 	G = 0;
+    i = 0;
 	Celula = (struct malha *) malloc ( ((plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna)*sizeof(struct malha));
+    parede = (int *)malloc(sizeof(int)*1000000);
 	//Condicoes iniciais de todas as celulas
     for(plano=0;plano<(maxplano);plano++){
     for(linha=0;linha<(maxlinha);linha++){
         for(coluna=0;coluna<(maxcoluna);coluna++){
             //CondiÁoes iniciais
              //   ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr = 0.5+(G*DyCA*((300-linha)/2));
-                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr = 10.0 +(G*DzCA*((maxplano-plano)));
+                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr = 0 +(G*DzCA*((maxplano-plano)));
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient2 = 0;
-                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient3 = 0.27;
+                ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient3 = 0;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->L = 0;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->fst = 0;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->CXrelativo = coluna*DxCA;
@@ -102,12 +105,96 @@ int main(int argc, char* argv[])
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->ativado = 0;
                 ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr_crit = 0;
                 ((Celula+(plano*maxlinha*maxcoluna)+(linha*maxcoluna) + coluna))-> orient = 2.0;
+                numeroCelula = plano*maxcoluna*maxlinha + linha*maxcoluna + coluna;
+            if ( (plano == 0) || (coluna == 0) || (linha == 0) ||(plano == maxplano-1) || (linha==maxlinha-1) || (coluna==maxcoluna-1) ){
+                parede[i] = numeroCelula;
+             //   printf("Celula %d\n é de canto", parede[i]);
+                i = i+1;}
         }}};
+    
+    
+    
+    
+    srand(time(NULL));
+	//Calcula nmax0 e nmax1. nmax0 sera o numero maximo de celulas a ter Scrit em paredes e nmax1 no centro
+    nmax0 = 2.5*(pow(10.0,8));
+    nmax1 = (5.5*(pow(10.0,10))); //em m-3
+    
+    area = maxcoluna*maxlinha*DyCA*DxCA*2 + maxcoluna*maxplano*DzCA*DxCA*2 + maxlinha*maxplano*DyCA*DzCA*2;
+    volume = maxplano*(maxcoluna)*(maxlinha)*DxCA*DyCA*DzCA;
+    
+    nmax0 = nmax0*area;
+    nmax1 = nmax1*volume;
+    printf("%f\n %f\n",nmax0, nmax1);
+    
+    
+    j2 = 0;
+    j = 0;
+    total_parede = 0;
+    e_anterior_parede = 0;
+    e_anterior_centro = 0;
+    formados_parede = 0;
+    formados_centro = 0;
+    
+    b = 0;
+    while (b<=1.0){
+        
+        e_anterior_parede = formados_parede;
+        formados_parede = (formacao(b,0.1,0.5));
+        total_parede = formados_parede - e_anterior_parede;
+        total_parede = 0.5+(nmax0*total_parede);
+        
+        for(i=1;i<total_parede;i++){
+            sorteado_parede = RandParede(maxlinha, maxcoluna, maxplano, parede);
+            if( ((Celula + sorteado_parede)->Sresfr_crit) != 0) {
+                sorteado_parede = RandParede(maxlinha, maxcoluna, maxplano, parede);}
+            if( ((Celula + sorteado_parede)->Sresfr_crit) != 0) {
+                sorteado_parede = RandParede(maxlinha, maxcoluna, maxplano, parede);}
+            if( ((Celula + sorteado_parede)->Sresfr_crit) != 0) {
+                sorteado_parede = RandParede(maxlinha, maxcoluna, maxplano, parede);}
+            (Celula + sorteado_parede)->Sresfr_crit = b;
+            (Celula + sorteado_parede)->orient = RandOrient();
+            (Celula + sorteado_parede)->orient2 = RandOrient();
+            (Celula + sorteado_parede)->orient3 = RandOrient();
+        //    printf("Sorteou na parede a celula %d. Foram sorteados %d numeros na parede ja\n",sorteado_parede, j);
+            j++;
+        }
+        b = b + 0.05;
+    }
+    b = 7.5;
+    while (b<=8.5){
+        e_anterior_centro = formados_centro;
+        formados_centro = (formacao(b,0.1,8.0));
+        total_centro = formados_centro - e_anterior_centro;
+        total_centro = 0.6+(nmax1*total_centro);
+        for(i=1;i<total_centro;i++){
+            sorteado_centro = RandCentro(maxlinha, maxcoluna, maxplano);
+            if( ((Celula + sorteado_centro)->Sresfr_crit) != 0) {
+                sorteado_centro = RandCentro(maxlinha, maxcoluna, maxplano);}
+            if( ((Celula + sorteado_centro)->Sresfr_crit) != 0) {
+                sorteado_centro = RandCentro(maxlinha, maxcoluna, maxplano);}
+            if( ((Celula + sorteado_centro)->Sresfr_crit) != 0) {
+                sorteado_centro = RandCentro(maxlinha, maxcoluna, maxplano);}
+            if( ((Celula + sorteado_centro)->Sresfr_crit) != 0) {
+                sorteado_centro = RandCentro(maxlinha, maxcoluna, maxplano);}
+            (Celula + sorteado_centro)->Sresfr_crit = b;
+            (Celula + sorteado_centro)->orient = RandOrient();
+            (Celula + sorteado_centro)->orient2 = RandOrient();
+            (Celula + sorteado_centro)->orient3 = RandOrient();
+         //   printf("Sorteou no centro a celula %d. Foram sorteados %d numeros no centro ja\n",sorteado_centro, j2);
+            j2++;
+        }
+        
+        b = b+0.1;
+    }
+    printf("%f",nmax0);
+    printf("\n%f",nmax1);
 
+    
 	//Nucleacao da celula central
-	((Celula + 44949) -> orient) = (0.26); //0.524 = 30graus 60 = 1.047197550 0.2618 para 15
-	((Celula + 44949) -> ativado) = 1.0;
-    while (tempo<10){
+//	((Celula + 44949) -> orient) = (0.26); //0.524 = 30graus 60 = 1.047197550 0.2618 para 15
+//	((Celula + 44949) -> ativado) = 1.0;
+    while (tempo<4){
         //Inicio do programa de crescimento
     for(plano=0;plano<maxplano;plano++){
         for(linha=0;linha<(maxlinha);linha++){
@@ -116,8 +203,8 @@ int main(int argc, char* argv[])
                 numeroCelula = (plano*maxlinha*maxcoluna)+(linha*maxcoluna) + (coluna);
 
                 //Ativa a celula se atingido o Sresfr minimo
-     /*           if ( ((((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient) !=2.0) && ((((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr_crit)<(((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr))){
-                    (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->ativado) = 1.0;} */
+                if ( ((((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient) !=2.0) && ((((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr_crit)<(((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr))){
+                    (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->ativado) = 1.0;}
 
                 //Caso todas as celulas ao redor da selecionada j· estejam nucleadas. A celula selecionada È desativada.
                 if ( (linha<(maxlinha-1))&&(linha>0)&&(coluna>0)&&(coluna<(maxcoluna-1)) && (plano>0) && (plano<maxplano-1) ){
@@ -128,14 +215,14 @@ int main(int argc, char* argv[])
                                 if (  ((((Celula+(plano*maxlinha*maxcoluna)+((linha-1)*maxcoluna) + coluna))->orient) !=2.0)){
                                     if(  ((((Celula+((plano+1)*maxlinha*maxcoluna)+(linha*maxcoluna) + coluna))->orient) !=2.0)){
                                         if(  ((((Celula+((plano-1)*maxlinha*maxcoluna)+(linha*maxcoluna) + coluna))->orient) !=2.0)){
-                                    (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient) = 3.0;
+                          //          (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->orient) = 3.0;
                                     (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->ativado) = 0;
                                         }}}}}}}
 
                //Arrumar as celulas de canto!
 
 
-                (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr) =  (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr)+(0.1*Dtempo); //Super resfriamento sem considerar o campo
+                (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr) =  (((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->Sresfr)+(2.3*Dtempo); //Super resfriamento sem considerar o campo
 
                // ativado = ((Celula+(plano*maxcoluna*maxlinha)+(linha*maxcoluna) + coluna))->ativado;
 
@@ -817,8 +904,8 @@ double Vcresc (struct malha *Celula){
 	double V;
 	double Sresfr;
 	Sresfr = (Celula->Sresfr);
-	a2 = ((1.0)/1000000);  //8.26*10^-6 ou 2.9/10^6 para 7%Si ou 10^-4
-	a3 = ((0.0)/1000000); //8.18/10^5  ou 1.49/10^6 ou 0
+	a2 = ((2.9)/1000000);  //8.26*10^-6 ou 2.9/10^6 para 7%Si ou 10^-4
+	a3 = ((1.49)/1000000); //8.18/10^5  ou 1.49/10^6 ou 0
 
 	V = (a2*Sresfr*Sresfr) + (a3*Sresfr*Sresfr*Sresfr);
 	return V;
@@ -946,7 +1033,7 @@ double Truncado (double Lado) {
     aLado = Lado;
     c = aLado/2;
     d = aLado/2;
-    l = (3.0)/10000; //EspaÁo entre dois centros de duas celulas
+    l = (2.5)/100000; //EspaÁo entre dois centros de duas celulas
     l = l*(sqrt(3.0));
     if (l<c){
         c = l;}
@@ -1245,37 +1332,21 @@ double erf(double x)
 int RandCentro(int maxlinha,int maxcoluna, int maxplano) {
 	int a,b, c;
 
-	a = rand() % (maxlinha-1);
-	b = rand() % (maxcoluna-1);
-    c = rand() % (maxplano-1);
+	a = rand() % (maxlinha-3);
+	b = rand() % (maxcoluna-3);
+    c = rand() % (maxplano-3);
 
 	a = ((c+1)*maxlinha*maxcoluna) + ((a+1)*maxcoluna) + (b+1);
 
 	return a;
 }
-int RandParede(int maxlinha, int maxcoluna, int maxplano){
-	int vetor[1000000], total, i, j, celula, plano, coluna, linha;
-    
-    i = 0;
-    for (plano=0;plano<maxplano;plano++){
-        for (linha=0;linha<maxlinha;linha++){
-            for (coluna=0;coluna<maxcoluna;coluna++){
-                celula = (plano*maxlinha*maxcoluna) + (linha*maxcoluna) + coluna;
-                if ( (plano == 0) || (coluna == 0) || (linha == 0) ){
-                    vetor[i] = celula;
-                    i = i+1;
-                }
-                
-            }
-            
-        }
-        
-    }
+int RandParede(int maxlinha, int maxcoluna, int maxplano, int celula[]){
+	int j, total;
 
 	total = (2*maxcoluna*maxlinha) + (2*maxcoluna*maxplano) + (2*maxlinha*maxplano);
     
     j = rand() % (total);
-	return vetor[j];
+	return celula[j];
 }
 double RandOrient (){
 	double vetor[45];
