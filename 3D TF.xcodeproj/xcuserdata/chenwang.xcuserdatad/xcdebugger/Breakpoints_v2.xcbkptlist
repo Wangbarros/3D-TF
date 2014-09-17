@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "3D TF/main.cpp"
-            timestampString = "432096865.259184"
+            timestampString = "432685465.108489"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1113"
-            endingLineNumber = "1113"
+            startingLineNumber = "1112"
+            endingLineNumber = "1112"
             landmarkName = "nucleacao (double alpha[], struct malha *Celula, double(*Abs)(double), double(*Truncado)(double), double(*distancia)(struct malha *Celula, double A[]), double V1[], double V2[], double V3[], double V4[], double V5[], double V6[], struct malha *Vizinho)"
             landmarkType = "7">
          </BreakpointContent>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "3D TF/main.cpp"
-            timestampString = "432096865.259184"
+            timestampString = "432685465.108489"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1093"
-            endingLineNumber = "1093">
+            startingLineNumber = "1092"
+            endingLineNumber = "1092">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -88,7 +88,23 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "3D TF/main.cpp"
-            timestampString = "432096865.259184"
+            timestampString = "432685465.108489"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1095"
+            endingLineNumber = "1095"
+            landmarkName = "nucleacao (double alpha[], struct malha *Celula, double(*Abs)(double), double(*Truncado)(double), double(*distancia)(struct malha *Celula, double A[]), double V1[], double V2[], double V3[], double V4[], double V5[], double V6[], struct malha *Vizinho)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "3D TF/main.cpp"
+            timestampString = "432685465.108489"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1096"
@@ -104,11 +120,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "3D TF/main.cpp"
-            timestampString = "432096865.259184"
+            timestampString = "432685465.108489"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1097"
-            endingLineNumber = "1097"
+            startingLineNumber = "1102"
+            endingLineNumber = "1102"
             landmarkName = "nucleacao (double alpha[], struct malha *Celula, double(*Abs)(double), double(*Truncado)(double), double(*distancia)(struct malha *Celula, double A[]), double V1[], double V2[], double V3[], double V4[], double V5[], double V6[], struct malha *Vizinho)"
             landmarkType = "7">
          </BreakpointContent>
@@ -120,11 +136,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "3D TF/main.cpp"
-            timestampString = "432096865.259184"
+            timestampString = "432685465.108489"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1103"
-            endingLineNumber = "1103"
+            startingLineNumber = "1191"
+            endingLineNumber = "1191"
             landmarkName = "nucleacao (double alpha[], struct malha *Celula, double(*Abs)(double), double(*Truncado)(double), double(*distancia)(struct malha *Celula, double A[]), double V1[], double V2[], double V3[], double V4[], double V5[], double V6[], struct malha *Vizinho)"
             landmarkType = "7">
          </BreakpointContent>
@@ -136,11 +152,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "3D TF/main.cpp"
-            timestampString = "432096865.259184"
+            timestampString = "432685465.108489"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1192"
-            endingLineNumber = "1192"
+            startingLineNumber = "1100"
+            endingLineNumber = "1100"
             landmarkName = "nucleacao (double alpha[], struct malha *Celula, double(*Abs)(double), double(*Truncado)(double), double(*distancia)(struct malha *Celula, double A[]), double V1[], double V2[], double V3[], double V4[], double V5[], double V6[], struct malha *Vizinho)"
             landmarkType = "7">
          </BreakpointContent>
@@ -152,27 +168,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "3D TF/main.cpp"
-            timestampString = "432096865.259184"
+            timestampString = "432685465.108489"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1101"
-            endingLineNumber = "1101"
-            landmarkName = "nucleacao (double alpha[], struct malha *Celula, double(*Abs)(double), double(*Truncado)(double), double(*distancia)(struct malha *Celula, double A[]), double V1[], double V2[], double V3[], double V4[], double V5[], double V6[], struct malha *Vizinho)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "3D TF/main.cpp"
-            timestampString = "432096865.259184"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1086"
-            endingLineNumber = "1086"
+            startingLineNumber = "1085"
+            endingLineNumber = "1085"
             landmarkName = "Calpha (struct malha *Celula, struct malha *Vizinho, double V1[], double V2[], double V3[], double V4[], double V5[], double V6[], double alpha[])"
             landmarkType = "7">
          </BreakpointContent>
@@ -184,11 +184,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "3D TF/main.cpp"
-            timestampString = "432096865.259184"
+            timestampString = "432685465.108489"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1087"
-            endingLineNumber = "1087"
+            startingLineNumber = "1086"
+            endingLineNumber = "1086"
             landmarkName = "Calpha (struct malha *Celula, struct malha *Vizinho, double V1[], double V2[], double V3[], double V4[], double V5[], double V6[], double alpha[])"
             landmarkType = "7">
          </BreakpointContent>
@@ -248,11 +248,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "3D TF/main.cpp"
-            timestampString = "432096865.259184"
+            timestampString = "432685465.108489"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1078"
-            endingLineNumber = "1078"
+            startingLineNumber = "1077"
+            endingLineNumber = "1077"
             landmarkName = "Calpha (struct malha *Celula, struct malha *Vizinho, double V1[], double V2[], double V3[], double V4[], double V5[], double V6[], double alpha[])"
             landmarkType = "7">
          </BreakpointContent>
